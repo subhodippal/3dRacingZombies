@@ -26,7 +26,9 @@ Built with [Three.js](https://threejs.org/) (r128, loaded from a CDN). The whole
 | `P` or `Esc` | Pause |
 | `M` | Mute |
 
-On phones and tablets, on-screen buttons appear. The car accelerates and shifts gears by itself.
+On phones and tablets the game plays in **landscape**. If you hold the phone upright, a "turn your phone" screen appears and the game pauses. On Android, starting a run goes fullscreen and locks landscape. iOS can't lock the orientation, so just rotate the phone.
+
+Touch controls: the car accelerates and shifts gears by itself. Hold or slide your left thumb on ◀ ▶ to steer. Use JUMP, BRAKE (hold at a stop to reverse) and NOS with your right thumb. Drag the road to look around and pinch to zoom. The game switches between touch and keyboard controls based on what you used last, so a touchscreen laptop works either way.
 
 > If you hold `Ctrl` and then press `W`, the browser closes the tab, and a web page can't block that. Press `W` before `Ctrl`, or use `N` for nitrous.
 

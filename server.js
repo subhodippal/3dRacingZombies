@@ -62,6 +62,20 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Dead Mile Racer running at http://localhost:${PORT}`);
+// If the port is taken (e.g. another app on 3000), try the next one instead of crashing.
+let port = PORT;
+const MAX_TRIES = 20;
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE' && port < PORT + MAX_TRIES) {
+    console.log(`Port ${port} is in use, trying ${port + 1}...`);
+    port += 1;
+    server.listen(port);
+  } else {
+    console.error(err.message);
+    process.exit(1);
+  }
 });
+server.on('listening', () => {
+  console.log(`Dead Mile Racer running at http://localhost:${port}`);
+});
+server.listen(port);
