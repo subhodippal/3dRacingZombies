@@ -11,26 +11,59 @@ Built with [Three.js](https://threejs.org/) (r128, loaded from a CDN). The whole
 
 ## Controls
 
+The car always accelerates by itself. The **MENU** button (top left) or `Esc` opens the pause menu. The **camera** button (top right) changes the camera angle.
+
+- **Manual:** each gear (R, N, 1–5) has a top speed. Shift up when the gear number flashes and shift down to slow down (engine braking). N rolls to a stop, and you can only select R once you've stopped.
+- **Automatic:** gears change by themselves. Hold gear-down to brake, and keep holding at a stop to reverse. Let go to stop and pull away forward.
+
+### Keyboard
+
 | Key | Action |
 | --- | --- |
-| `W` / `S` | Throttle / brake |
-| `A` / `D` | Steer |
+| `W` / `↑` | Gear up |
+| `S` / `↓` | Gear down (automatic: hold to brake) |
+| `A` / `←`, `D` / `→` | Steer left / right |
 | `Space` | Jump |
-| `Ctrl` or `N` | Nitrous boost |
-| `Caps Lock` or `E` | Shift up |
-| `Shift` or `Q` | Shift down |
-| `G` | Switch between manual and automatic gearbox |
-| `C` | Inside-car (cockpit) view |
-| `V` | Cycle camera views (chase, low, high, side, cockpit) |
+| `Ctrl` (or `N`) | Special ability: nitrous boost |
+| `Esc` | Pause menu and settings |
+| `G` / `M` | Switch transmission / mute |
+| `C` / `V` | Inside-car view / cycle camera views |
 | Mouse drag / scroll | Look around / zoom |
-| `P` or `Esc` | Pause |
-| `M` | Mute |
-
-On phones and tablets the game plays in **landscape**. If you hold the phone upright, a "turn your phone" screen appears and the game pauses. On Android, starting a run goes fullscreen and locks landscape. iOS can't lock the orientation, so just rotate the phone.
-
-Touch controls: the car accelerates and shifts gears by itself. Hold or slide your left thumb on ◀ ▶ to steer. Use JUMP, BRAKE (hold at a stop to reverse) and NOS with your right thumb. Drag the road to look around and pinch to zoom. The game switches between touch and keyboard controls based on what you used last, so a touchscreen laptop works either way.
 
 > If you hold `Ctrl` and then press `W`, the browser closes the tab, and a web page can't block that. Press `W` before `Ctrl`, or use `N` for nitrous.
+
+### Gamepad
+
+These are the defaults. You can remap every action except steering in **Settings → Gamepad**.
+
+| Button | Action |
+| --- | --- |
+| Left stick / D-pad ← → | Steer (fixed) |
+| `A` | Gear up (also starts the game) |
+| `B` | Gear down (automatic: hold to brake) |
+| `Y` | Jump |
+| `X` | Special ability: nitrous boost |
+| D-pad ↑ | Change camera angle |
+| `Start` | Pause menu |
+
+### Touch
+
+| Control | Action |
+| --- | --- |
+| Slide pad ◀ ▶ | Put your thumb on a pad and slide and hold to steer. The further you slide, the sharper the turn |
+| Slide pad ▲ ▼ | Gear up / gear down, one gear per slide (automatic: slide down and hold to brake) |
+| JUMP (bottom corner) | Jump |
+| SPECIAL (other bottom corner) | Nitrous boost |
+
+Portrait shows one slide pad above the buttons. Landscape shows two pads, one for each thumb.
+
+### Settings
+
+Open them from the pause menu, or from **Settings** on the start screen. They're saved in the browser.
+
+- **General:** transmission (automatic / manual), sound.
+- **Touch screen:** orientation (landscape only / portrait + landscape), one or two pads in landscape, which side JUMP and SPECIAL go on, control size, steering sensitivity. In *Landscape only* mode, holding the phone upright shows a "turn your phone" screen. On Android, starting a run also goes fullscreen and locks landscape. iOS can't lock the orientation.
+- **Gamepad:** remap gear up, gear down, jump, special ability, camera and pause. Choose **Change**, then press a button. If that button was already in use, the two actions swap.
 
 ## Gameplay
 

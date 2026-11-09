@@ -114,16 +114,14 @@ button.ghost { font-family: var(--hud); font-weight: 700; font-size: 13px; lette
 .pad button.nos { border-color: var(--nitro); color: var(--nitro); }
 .pad svg { width: 28px; height: 28px; fill: currentColor; }
 .touch .hud { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 106px); }
-.pad .gearpad { display: none; flex-direction: column; gap: 8px; }
-.manual .pad .gearpad { display: flex; }
-.pad .gearpad button { width: 48px; height: 48px; font-size: 16px; }
-@media (max-width: 460px) { .pad .grp > button { width: 60px; height: 60px; font-size: 12px; } .pad .grp { gap: 8px; } }
+.pad button.big-btn { width: 84px; height: 84px; font-size: 14px; }
+#swipeRing { position: fixed; left: 0; top: 0; width: 120px; height: 120px; margin: -60px 0 0 -60px; border: 2px solid var(--line); border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity .15s; }
+#swipeRing.on { opacity: 1; }
+#swipeRing i { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: rgba(255,179,64,.35); border: 2px solid var(--sodium); }
+@media (max-width: 460px) { .pad button.big-btn { width: 74px; height: 74px; font-size: 13px; } }
 .screen { align-items: safe center; }
 body { touch-action: manipulation; }
 
-/* steering: one zone so the thumb can slide between left and right */
-.pad .steer { pointer-events: auto; touch-action: none; padding: 14px; margin: -14px; }
-.pad .steer button { pointer-events: none; }
 
 /* phones held upright: ask for landscape */
 #rotate { position: fixed; inset: 0; z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; text-align: center; background: var(--night); }
@@ -131,7 +129,16 @@ body { touch-action: manipulation; }
 #rotate p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted); max-width: 30ch; }
 #rotate b { font-family: var(--display); font-weight: 400; font-size: 30px; color: var(--fg); display: block; margin-bottom: 6px; }
 @keyframes tilt { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
-@media (orientation: portrait) { .touch #rotate { display: flex; } }
+@media (orientation: portrait) { .touch:not(.any-orient) #rotate { display: flex; } }
+#rotate button.ghost { margin-top: 6px; }
+.opt-touch { display: none !important; }
+.touch .opt-touch { display: flex !important; }
+.setting { gap: 10px; font-size: 13px; color: var(--muted); letter-spacing: .08em; }
+.setting .label { margin-right: 2px; }
+.seg { display: inline-flex; border: 1px solid var(--line); }
+.seg button { font-family: var(--hud); font-weight: 700; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; background: transparent; color: var(--muted); border: 0; padding: 9px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--sodium); color: #1a1206; }
+.seg button:focus-visible { outline: 2px solid var(--nitro); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { #rotate svg { animation: none; transform: rotate(-90deg); } }
 
 /* landscape phones are short: shrink the HUD and pad so the road stays visible */
@@ -145,9 +152,7 @@ body { touch-action: manipulation; }
   .label { font-size: 10px; }
   .sub { font-size: 12px; }
   .pad { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
-  .pad .grp > button { width: 62px; height: 62px; font-size: 12px; }
-  .pad .grp { gap: 10px; }
-  .pad .gearpad button { width: 42px; height: 42px; }
+  .pad button.big-btn { width: 70px; height: 70px; font-size: 13px; }
   .touch .hud { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 82px); }
   .touch .hint { bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); }
   .topbtns { top: calc(env(safe-area-inset-top, 0px) + 8px); }
@@ -187,7 +192,7 @@ body { touch-action: manipulation; }
       <span class="gear" id="gear">1</span>
       <div class="spdcol"><span class="speed" id="spd">0</span><span class="unit">KM/H · <span id="rpmTxt">900</span> RPM</span></div>
     </div>
-    <span class="unit" id="gbMode">MANUAL · CAPS ▲ · SHIFT ▼</span>
+    <span class="unit" id="gbMode">MANUAL · W ▲ · S ▼</span>
   </div>
 </div>
 <div class="topbtns" id="topbtns" hidden>
@@ -202,24 +207,15 @@ body { touch-action: manipulation; }
 <div id="flash"></div>
 
 <div class="pad" id="pad">
-  <div class="grp steer" id="tSteer">
-    <button type="button" id="tLeft" aria-label="Steer left"><svg viewBox="0 0 24 24"><path d="M15 4 6 12l9 8z"/></svg></button>
-    <button type="button" id="tRight" aria-label="Steer right"><svg viewBox="0 0 24 24"><path d="m9 4 9 8-9 8z"/></svg></button>
-  </div>
-  <div class="grp gearpad">
-    <button type="button" id="tUp" aria-label="Shift up">▲</button>
-    <button type="button" id="tDown" aria-label="Shift down">▼</button>
-  </div>
-  <div class="grp">
-    <button type="button" id="tJump">JUMP</button>
-    <button type="button" id="tBrake">BRAKE</button>
-    <button type="button" id="tNitro" class="nos">NOS</button>
-  </div>
+  <div class="grp"><button type="button" id="tJump" class="big-btn">JUMP</button></div>
+  <div class="grp"><button type="button" id="tNitro" class="big-btn nos">NOS</button></div>
 </div>
+<div id="swipeRing" aria-hidden="true"><i></i></div>
 
 <div id="rotate" role="alert">
   <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="15" y="5" width="18" height="38" rx="3"/><path d="M21 38h6"/></svg>
-  <p><b>TURN YOUR PHONE</b>Dead Mile plays in landscape. Rotate your device sideways to drive.</p>
+  <p><b>TURN YOUR PHONE</b>Dead Mile is set to landscape. Rotate your device sideways to drive.</p>
+  <button class="ghost" id="rotateAny" type="button">Play in portrait instead</button>
 </div>
 
 <div class="screen" id="menu">
@@ -228,22 +224,27 @@ body { touch-action: manipulation; }
     <h1>DEAD<br><span>MILE</span></h1>
     <p class="lede">The city fell at midnight, but the night traffic still runs. Weave through three lanes, launch off speed breakers, dodge the potholes, and flatten any shambler that steps off the curb.</p>
     <div class="keys">
-      <span class="k-desk"><kbd>W</kbd> <kbd>S</kbd></span><span class="k-desk">Throttle / brake</span>
-      <span class="k-desk"><kbd>A</kbd> <kbd>D</kbd></span><span class="k-desk">Steer through the bends</span>
+      <span class="k-desk"><kbd>W</kbd> <kbd>S</kbd> / <kbd>↑</kbd> <kbd>↓</kbd></span><span class="k-desk">Gear up / gear down (automatic: hold down to brake)</span>
+      <span class="k-desk"><kbd>A</kbd> <kbd>D</kbd> / <kbd>←</kbd> <kbd>→</kbd></span><span class="k-desk">Steer left / right</span>
       <span class="k-desk"><kbd>Space</kbd></span><span class="k-desk">Jump</span>
-      <span class="k-desk"><kbd>Ctrl</kbd> <kbd>N</kbd></span><span class="k-desk">Nitrous boost</span>
-      <span class="k-desk"><kbd>Caps Lock</kbd></span><span class="k-desk">Shift up (also <kbd>E</kbd>)</span>
-      <span class="k-desk"><kbd>Shift</kbd></span><span class="k-desk">Shift down (also <kbd>Q</kbd>)</span>
-      <span class="k-desk"><kbd>G</kbd></span><span class="k-desk">Switch manual / automatic gearbox</span>
+      <span class="k-desk"><kbd>Ctrl</kbd></span><span class="k-desk">Special ability: nitrous boost (also <kbd>N</kbd>)</span>
+      <span class="k-desk"><kbd>G</kbd></span><span class="k-desk">Switch manual / automatic transmission</span>
       <span class="k-desk"><kbd>C</kbd> <kbd>V</kbd></span><span class="k-desk">Inside-car view / cycle camera views</span>
-      <span class="k-desk"><kbd>Drag</kbd></span><span class="k-desk">Look around, scroll to zoom</span>
-      <span class="k-desk"><kbd>P</kbd></span><span class="k-desk">Pause</span>
-      <span class="k-touch"><kbd>Auto</kbd><span>Accelerates and shifts gears by itself</span><kbd>◀ ▶</kbd><span>Steer through the bends</span><kbd>JUMP</kbd><span>Hop over potholes and zombies</span><kbd>BRAKE</kbd><span>Slow down; hold at a stop to reverse</span><kbd>NOS</kbd><span>Nitrous boost</span><kbd>Drag</kbd><span>Look around, pinch to zoom</span></span>
+      <span class="k-desk"><kbd>P</kbd> <kbd>M</kbd></span><span class="k-desk">Pause / mute</span>
+      <span class="k-desk"><kbd>Gamepad</kbd></span><span class="k-desk">Stick or D-pad steer · <kbd>A</kbd> gear up · <kbd>B</kbd> gear down · <kbd>Y</kbd> jump · <kbd>X</kbd> nitrous · D-pad <kbd>↑</kbd> camera · <kbd>Start</kbd> pause</span>
+      <span class="k-touch"><kbd>Slide ◀ ▶</kbd><span>Steer: slide and hold left or right</span><kbd>Slide ▲ ▼</kbd><span>Gear up / gear down (automatic: slide down and hold to brake)</span><kbd>JUMP</kbd><span>Bottom left: hop over potholes and zombies</span><kbd>NOS</kbd><span>Bottom right: special ability, nitrous boost</span></span>
     </div>
-    <p class="note k-desk">Gearbox: <b>R · N · 1–5</b>. Pull away in 1st and shift up when the gear number flashes. Stop before you select reverse. Holding Ctrl and then pressing W closes the browser tab, so press W first, or use N for nitrous.</p>
+    <p class="note k-desk">The car drives itself. <b>Manual:</b> each gear (R · N · 1–5) has a top speed, so shift up when the gear number flashes and shift down to slow; N rolls to a stop and R needs you stopped. <b>Automatic:</b> gears change for you; hold <b>S</b> to brake, keep holding at a stop to reverse. Holding Ctrl and then pressing W closes the browser tab, so press W first, or use N for nitrous.</p>
     <div class="row">
       <button class="go" id="startBtn" type="button">START ENGINE</button>
       <span class="best">Best run <b id="bestMenu">0</b></span>
+    </div>
+    <div class="row setting opt-touch">
+      <span class="label">Screen</span>
+      <span class="seg orient-seg" role="group" aria-label="Screen orientation">
+        <button type="button" data-orient="landscape">Landscape only</button>
+        <button type="button" data-orient="any">Portrait + landscape</button>
+      </span>
     </div>
   </div>
 </div>
@@ -271,6 +272,13 @@ body { touch-action: manipulation; }
     <div class="row">
       <button class="go" id="resumeBtn" type="button">RESUME</button>
       <button class="ghost" id="quitBtn" type="button">Back to menu</button>
+    </div>
+    <div class="row setting opt-touch">
+      <span class="label">Screen</span>
+      <span class="seg orient-seg" role="group" aria-label="Screen orientation">
+        <button type="button" data-orient="landscape">Landscape only</button>
+        <button type="button" data-orient="any">Portrait + landscape</button>
+      </span>
     </div>
   </div>
 </div>
@@ -920,7 +928,7 @@ function updateHUD() {
   el.rpmBar.style.width = Math.min(100, S.rpm * 100) + '%';
   el.tach.classList.toggle('hot', S.rpm > 0.9);
   el.rpmTxt.textContent = Math.round((800 + S.rpm * 6400) / 100) * 100;
-  el.gbMode.textContent = S.auto ? (touchMode ? 'AUTOMATIC' : 'AUTOMATIC · G FOR MANUAL') : 'MANUAL · CAPS ▲ · SHIFT ▼';
+  el.gbMode.textContent = S.auto ? (touchMode ? 'AUTOMATIC · SLIDE ▼ TO BRAKE' : 'AUTOMATIC · HOLD S TO BRAKE') : (touchMode ? 'MANUAL · SLIDE ▲ ▼ TO SHIFT' : 'MANUAL · W ▲ · S ▼');
   el.score.textContent = (S.score | 0).toLocaleString();
   el.dist.textContent = (S.dist / 1000).toFixed(2) + ' km out';
   el.kills.textContent = S.kills;
@@ -944,11 +952,11 @@ function startGame() {
   show('menu', false); show('over', false); show('paused', false);
   show('hud', true); show('topbtns', true);
   $('pad').classList.add('live');
-  if (touchMode) goLandscape();
+  if (touchMode && orientPref === 'landscape') goLandscape();
   const hint = $('hint'); hint.hidden = false; hint.style.opacity = '1';
-  hint.textContent = touchMode ? 'Drag to look around · pinch to zoom · VIEW for inside-car' : 'Drag to look around · scroll to zoom · C for inside-car view';
+  hint.textContent = touchMode ? 'Slide ◀ ▶ to steer · slide ▲ ▼ to shift · VIEW changes camera' : 'Drag to look around · scroll to zoom · C for inside-car view';
   clearTimeout(hintTimer); hintTimer = setTimeout(() => { hint.style.opacity = '0'; }, 5000);
-  toast(S.auto ? 'GO GO GO' : '1ST GEAR · CAPS LOCK TO SHIFT', 'kill', 1);
+  toast(S.auto ? 'GO GO GO' : touchMode ? '1ST GEAR · SLIDE UP TO SHIFT' : '1ST GEAR · W TO SHIFT UP', 'kill', 1);
 }
 function endGame() {
   S.state = 'over';
@@ -1015,36 +1023,48 @@ function goLandscape() {
     try { const p = req.call(de, { navigationUI: 'hide' }); if (p && p.then) p.then(lock, () => {}); else lock(); } catch (_) {}
   } else lock();
 }
+// Screen setting: 'landscape' (rotate screen in portrait) or 'any' (play either way).
+let orientPref = 'landscape';
+try { if (localStorage.getItem('deadmile.orient') === 'any') orientPref = 'any'; } catch (_) {}
+function setOrientPref(pref, fromTap) {
+  orientPref = pref;
+  try { localStorage.setItem('deadmile.orient', pref); } catch (_) {}
+  document.body.classList.toggle('any-orient', pref === 'any');
+  document.querySelectorAll('.orient-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.orient === pref)));
+  if (pref === 'any') { try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch (_) {} }
+  else if (fromTap && touchMode && S.state !== 'menu') goLandscape();
+  onOrient();
+}
 const portraitMQ = matchMedia('(orientation: portrait)');
-const onOrient = () => { if (portraitMQ.matches && touchMode && S.state === 'play') pause(true); };
+const onOrient = () => { if (orientPref === 'landscape' && portraitMQ.matches && touchMode && S.state === 'play') pause(true); };
 if (portraitMQ.addEventListener) portraitMQ.addEventListener('change', onOrient); else portraitMQ.addListener(onOrient);
 $('rotate').addEventListener('click', goLandscape);
+$('rotateAny').addEventListener('click', e => { e.stopPropagation(); setOrientPref('any', true); });
+document.querySelectorAll('.orient-seg button').forEach(b => b.addEventListener('click', () => setOrientPref(b.dataset.orient, true)));
+setOrientPref(orientPref, false);
 refreshInputUI = () => { hudLast = ''; onOrient(); };
 
 /* ---------- input ---------- */
+// Three input sources feed the same controls. Held state lives in keys (keyboard),
+// gp (gamepad) and tc (touch slide); one-shot actions call gearInput / jumpQueued.
+//   up / down : held  -> automatic brake / reverse
+//               press -> manual gear up / down
+//   steer     : -1..1 (positive = left)
 const keyMap = { KeyW: 'up', ArrowUp: 'up', KeyS: 'down', ArrowDown: 'down', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right', ControlLeft: 'nitro', ControlRight: 'nitro', KeyN: 'nitro' };
-let capsState = null, capsLastShift = 0, jumpQueued = false;
-function readCaps(e) { return typeof e.getModifierState === 'function' ? e.getModifierState('CapsLock') : null; }
-// Caps Lock fires keydown/keyup differently per OS (macOS sends one event per toggle),
-// so count a press whenever the lock state flips, with a short debounce.
-function handleCaps(e) {
-  e.preventDefault();
-  const st = readCaps(e);
-  let press = (st === null || capsState === null) ? e.type === 'keydown' : st !== capsState;
-  capsState = st;
-  const now = performance.now();
-  if (press && !e.repeat && now - capsLastShift > 150) { capsLastShift = now; shiftGear(1); }
-}
-addEventListener('pointerdown', e => { const st = readCaps(e); if (st !== null) capsState = st; }, true);
+const gp = { up: false, down: false, nitro: false, steer: 0 };
+const tc = { up: false, down: false, nitro: false, steer: 0 };
+let jumpQueued = false;
+function gearInput(dir) { if (!S.auto) shiftGear(dir); }
+
 addEventListener('keydown', e => {
-  if (e.code === 'CapsLock') { handleCaps(e); return; }
-  const st = readCaps(e); if (st !== null) capsState = st;
   const k = keyMap[e.code];
   if (k) { keys[k] = true; if (S.state === 'play') e.preventDefault(); }
   if (e.ctrlKey && S.state === 'play') e.preventDefault();
+  if (!e.repeat) {
+    if (k === 'up') gearInput(1);
+    if (k === 'down') gearInput(-1);
+  }
   if (e.code === 'Space') { if (S.state === 'play') e.preventDefault(); if (!e.repeat) jumpQueued = true; }
-  if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyQ') && !e.repeat) shiftGear(-1);
-  if (e.code === 'KeyE' && !e.repeat) shiftGear(1);
   if (e.code === 'KeyG' && !e.repeat) setAuto(!S.auto);
   if (e.code === 'KeyP' || e.code === 'Escape') { if (S.state === 'play') pause(true); else if (S.state === 'paused') pause(false); }
   if (e.code === 'KeyM' && !e.repeat) $('muteBtn').click();
@@ -1053,73 +1073,88 @@ addEventListener('keydown', e => {
   if (e.code === 'Enter' && (S.state === 'menu' || S.state === 'over') && document.activeElement.tagName !== 'BUTTON') startGame();
   if (e.code === 'KeyR' && S.state === 'over') startGame();
 });
-addEventListener('keyup', e => {
-  if (e.code === 'CapsLock') { handleCaps(e); return; }
-  const k = keyMap[e.code]; if (k) keys[k] = false;
+addEventListener('keyup', e => { const k = keyMap[e.code]; if (k) keys[k] = false; });
+
+/* touch buttons: JUMP bottom-left, NOS (special ability) bottom-right */
+{
+  const jb = $('tJump');
+  jb.addEventListener('pointerdown', e => { e.preventDefault(); jumpQueued = true; jb.classList.add('down'); });
+  const off = () => jb.classList.remove('down');
+  jb.addEventListener('pointerup', off); jb.addEventListener('pointercancel', off); jb.addEventListener('pointerleave', off);
+  jb.addEventListener('contextmenu', e => e.preventDefault());
+  const nb = $('tNitro');
+  nb.addEventListener('pointerdown', e => { e.preventDefault(); tc.nitro = true; nb.classList.add('down'); try { nb.setPointerCapture(e.pointerId); } catch (_) {} });
+  const noff = () => { tc.nitro = false; nb.classList.remove('down'); };
+  nb.addEventListener('pointerup', noff); nb.addEventListener('pointercancel', noff); nb.addEventListener('lostpointercapture', noff);
+  nb.addEventListener('contextmenu', e => e.preventDefault());
+}
+addEventListener('blur', () => {
+  for (const k in keys) keys[k] = false;
+  tc.up = tc.down = tc.nitro = false; tc.steer = 0;
 });
-function bindTap(id, fn) {
-  const b = $(id);
-  b.addEventListener('pointerdown', e => { e.preventDefault(); fn(); b.classList.add('down'); });
-  const off = () => b.classList.remove('down');
-  b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('pointerleave', off);
-  b.addEventListener('contextmenu', e => e.preventDefault());
-}
-bindTap('tJump', () => { jumpQueued = true; });
-bindTap('tUp', () => shiftGear(1));
-bindTap('tDown', () => shiftGear(-1));
-addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
-function bindTouch(id, k) {
-  const b = $(id);
-  const on = e => { e.preventDefault(); keys[k] = true; b.classList.add('down'); try { b.setPointerCapture(e.pointerId); } catch (_) {} };
-  const off = () => { keys[k] = false; b.classList.remove('down'); };
-  b.addEventListener('pointerdown', on);
-  b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('lostpointercapture', off);
-  b.addEventListener('contextmenu', e => e.preventDefault());
-}
-bindTouch('tBrake', 'down'); bindTouch('tNitro', 'nitro');
 
-// Steering zone: whichever half the finger is over steers that way, so the thumb can
-// slide from left to right without lifting. Each finger is tracked separately.
-(() => {
-  const zone = $('tSteer'), L = $('tLeft'), R = $('tRight');
-  const fingers = new Map();
-  const apply = () => {
-    let l = false, r = false;
-    for (const d of fingers.values()) { if (d < 0) l = true; else r = true; }
-    if (l && r) l = r = false;
-    keys.left = l; keys.right = r;
-    L.classList.toggle('down', l); R.classList.toggle('down', r);
-  };
-  const dirAt = e => { const b = zone.getBoundingClientRect(); return e.clientX < b.left + b.width / 2 ? -1 : 1; };
-  zone.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    try { zone.setPointerCapture(e.pointerId); } catch (_) {}
-    fingers.set(e.pointerId, dirAt(e)); apply();
-  });
-  zone.addEventListener('pointermove', e => { if (fingers.has(e.pointerId)) { fingers.set(e.pointerId, dirAt(e)); apply(); } });
-  const end = e => { if (fingers.delete(e.pointerId)) apply(); };
-  zone.addEventListener('pointerup', end); zone.addEventListener('pointercancel', end); zone.addEventListener('lostpointercapture', end);
-  zone.addEventListener('contextmenu', e => e.preventDefault());
-  addEventListener('blur', () => { fingers.clear(); apply(); });
-})();
+/* gamepad (standard mapping): stick / D-pad steer, A gear up, B gear down,
+   Y jump, X nitrous, D-pad up camera, Start pause */
+const gpPrev = [];
+function pollGamepad() {
+  const list = navigator.getGamepads ? navigator.getGamepads() : [];
+  let p = null;
+  for (const q of list) if (q && q.connected) { p = q; break; }
+  if (!p) { gp.up = gp.down = gp.nitro = false; gp.steer = 0; return; }
+  const btn = i => !!(p.buttons[i] && p.buttons[i].pressed);
+  const now = [], edge = [];
+  for (let i = 0; i < 17; i++) { now[i] = btn(i); edge[i] = now[i] && !gpPrev[i]; gpPrev[i] = now[i]; }
+  let ax = p.axes[0] || 0;
+  if (Math.abs(ax) < 0.2) ax = 0;
+  gp.steer = clamp(-ax + (now[14] ? 1 : 0) - (now[15] ? 1 : 0), -1, 1);
+  gp.up = now[0]; gp.down = now[1]; gp.nitro = now[2];
+  if (now.some(Boolean) || ax) setTouchMode(false);
+  if (edge[9]) { if (S.state === 'play') pause(true); else if (S.state === 'paused') pause(false); }
+  if (S.state === 'menu' || S.state === 'over') { if (edge[0] || edge[9]) startGame(); return; }
+  if (S.state === 'paused') { if (edge[0]) pause(false); if (edge[1]) toMenu(); return; }
+  if (edge[0]) gearInput(1);
+  if (edge[1]) gearInput(-1);
+  if (edge[3]) jumpQueued = true;
+  if (edge[12]) setView(viewI + 1);
+}
 
-// camera drag (orbit), wheel / pinch (zoom), double-click (reset)
-const stage = $('stage');
-let drag = null, pinch = null;
-const stagePts = new Map();
-const spread = () => { const [a, b] = [...stagePts.values()]; return Math.hypot(a.x - b.x, a.y - b.y) || 1; };
+/* stage: touch slide controls while driving; otherwise drag to orbit the camera */
+const stage = $('stage'), ring = $('swipeRing');
+let drag = null, swipe = null;
+const STEER_DEAD = 12, STEER_FULL = 70, SHIFT_STEP = 55, HOLD_DEAD = 40;
 stage.addEventListener('pointerdown', e => {
-  stagePts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  try { stage.setPointerCapture(e.pointerId); } catch (_) {}
-  if (stagePts.size === 2) { drag = null; pinch = { d0: spread(), dist0: CAM.dist }; return; }
-  if (drag || pinch) return;
+  if (e.pointerType === 'touch' && S.state === 'play') {
+    if (swipe) return;                       // one steering finger at a time
+    e.preventDefault();
+    swipe = { id: e.pointerId, x0: e.clientX, y0: e.clientY, ax: e.clientX, ay: e.clientY };
+    try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+    ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    ring.firstChild.style.transform = '';
+    ring.classList.add('on');
+    return;
+  }
+  if (drag) return;
   drag = { id: e.pointerId, x: e.clientX, y: e.clientY };
   stage.classList.add('dragging');
+  try { stage.setPointerCapture(e.pointerId); } catch (_) {}
 });
 stage.addEventListener('pointermove', e => {
-  const p = stagePts.get(e.pointerId);
-  if (p) { p.x = e.clientX; p.y = e.clientY; }
-  if (pinch && stagePts.size >= 2) { CAM.dist = clamp(pinch.dist0 * pinch.d0 / spread(), 4.5, 22); return; }
+  if (swipe && e.pointerId === swipe.id) {
+    const x = e.clientX, y = e.clientY, dx = x - swipe.x0, dy = y - swipe.y0;
+    // steer: offset from where the finger landed, held as long as the finger stays there
+    const sx = Math.abs(dx) < STEER_DEAD ? 0 : (Math.abs(dx) - STEER_DEAD) / (STEER_FULL - STEER_DEAD);
+    tc.steer = -Math.sign(dx) * Math.min(1, sx);
+    // gear: each mostly-vertical slide of SHIFT_STEP px shifts once
+    const sdx = x - swipe.ax, sdy = y - swipe.ay;
+    if (Math.abs(sdy) > SHIFT_STEP && Math.abs(sdy) > Math.abs(sdx) * 1.3) { gearInput(sdy < 0 ? 1 : -1); swipe.ax = x; swipe.ay = y; }
+    else if (Math.abs(sdx) > SHIFT_STEP) { swipe.ax = x; swipe.ay = y; }
+    // automatic: slide down and hold to brake, slide up to pull away from reverse
+    tc.down = dy > HOLD_DEAD && Math.abs(dy) > Math.abs(dx);
+    tc.up = dy < -HOLD_DEAD && Math.abs(dy) > Math.abs(dx);
+    const k = Math.min(1, 60 / (Math.hypot(dx, dy) || 1));
+    ring.firstChild.style.transform = `translate(${dx * k}px, ${dy * k}px)`;
+    return;
+  }
   if (!drag || e.pointerId !== drag.id) return;
   const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
   drag.x = e.clientX; drag.y = e.clientY;
@@ -1132,11 +1167,13 @@ stage.addEventListener('pointermove', e => {
   }
 });
 const endDrag = e => {
-  stagePts.delete(e.pointerId);
-  if (stagePts.size < 2) pinch = null;
+  if (swipe && e.pointerId === swipe.id) {
+    swipe = null; tc.steer = 0; tc.up = tc.down = false;
+    ring.classList.remove('on');
+  }
   if (drag && e.pointerId === drag.id) { drag = null; stage.classList.remove('dragging'); }
 };
-stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag); stage.addEventListener('lostpointercapture', endDrag);
 stage.addEventListener('wheel', e => { e.preventDefault(); CAM.dist = clamp(CAM.dist * (1 + Math.sign(e.deltaY) * 0.08), 4.5, 22); }, { passive: false });
 stage.addEventListener('dblclick', () => setView(viewI));
 
@@ -1150,17 +1187,27 @@ function update(dt) {
   let throttle = 0, brake = 0, steer = 0, boost = false;
   S.shiftT -= dt; S.jumpCD -= dt;
   if (playing) {
-    let up = keys.up || (touchMode && !keys.down && S.gear !== 1), down = keys.down;
-    if (S.auto && S.shiftT <= 0) {
-      if (S.gear >= 1 && keys.down && S.speed < 0.8 && S.speed > -0.5) setGear(0);
-      else if (S.gear === 0 && (keys.up || (touchMode && !keys.down)) && S.speed > -0.8) setGear(2);
-      else if (S.gear === 1) setGear(2);
+    const hDown = keys.down || gp.down || tc.down;
+    if (S.auto) {
+      // automatic: drives itself; hold down to brake, keep holding at a stop to reverse,
+      // let go to stop and pull away forward again
+      let up = !hDown, down = hDown;
+      if (S.shiftT <= 0) {
+        if (S.gear >= 1 && hDown && S.speed < 0.8 && S.speed > -0.5) setGear(0);
+        else if (S.gear === 0 && !hDown && S.speed > -0.8) setGear(2);
+        else if (S.gear === 1) setGear(2);
+      }
+      if (S.gear === 0) { const t = up; up = down; down = t; }
+      throttle = up ? 1 : 0;
+      brake = down ? 1 : 0;
+    } else {
+      // manual: always on the throttle; the gear sets the top speed, shifting down
+      // engine-brakes, N rolls to a stop
+      throttle = S.gear === 1 ? 0 : 1;
+      brake = S.gear === 1 ? 0.22 : 0;
     }
-    if (S.auto && S.gear === 0) { const t = up; up = down; down = t; } // auto reverse: S drives back, W brakes
-    throttle = up ? 1 : 0;
-    brake = down ? 1 : 0;
-    steer = (keys.left ? 1 : 0) - (keys.right ? 1 : 0);
-    boost = keys.nitro && S.nitro > 0 && S.speed > 5 && S.gear >= 2;
+    steer = clamp((keys.left ? 1 : 0) - (keys.right ? 1 : 0) + gp.steer + tc.steer, -1, 1);
+    boost = (keys.nitro || gp.nitro || tc.nitro) && S.nitro > 0 && S.speed > 5 && S.gear >= 2;
   }
   const grounded = S.y <= groundY() + 0.02 && S.vy <= 0;
   if (jumpQueued) {
@@ -1190,7 +1237,7 @@ function update(dt) {
     }
     S.speed += a * dt;
     S.speed -= Math.sign(S.speed) * Math.min(Math.abs(S.speed), 1.2 * dt);
-    if (brake) S.speed -= Math.sign(S.speed) * Math.min(Math.abs(S.speed), 48 * dt);
+    if (brake) S.speed -= Math.sign(S.speed) * Math.min(Math.abs(S.speed), 48 * brake * dt);
     if (Math.abs(S.d) > ROAD_HALF) S.speed *= Math.max(0, 1 - 0.5 * dt);
   }
   {
@@ -1567,6 +1614,7 @@ function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
+  pollGamepad();
   if (S.state !== 'paused') update(dt);
   renderer.render(scene, camera);
 }
