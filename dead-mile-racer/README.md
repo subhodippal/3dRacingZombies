@@ -1,6 +1,6 @@
 # Dead Mile Racer
 
-A 3D zombie street racer that runs in the browser. You drive a car with a plow on the front along an endless, curving 3-lane city road at night. Weave through traffic, launch off speed breakers, avoid potholes and run over zombies for points.
+A 3D zombie street racer that runs in the browser. You drive a car with a plow on the front along an endless, curving city road at night. The road switches between 2 and 4 lanes (traffic merges where lanes end), runs through lit tunnels and under overbridges, and real street lights light it up. Weave through traffic, launch off speed breakers, avoid potholes and run over zombies for points.
 
 Built with [Three.js](https://threejs.org/) (r128, loaded from a CDN). The whole game is one `index.html` file, with no build step and no dependencies to install.
 
@@ -18,59 +18,65 @@ The car always accelerates by itself. The **MENU** button (top left) or `Esc` op
 
 ### Keyboard
 
+These are the defaults. You can remap every action except pause in **Settings → Desktop**.
+
 | Key | Action |
 | --- | --- |
-| `W` / `↑` | Gear up |
-| `S` / `↓` | Gear down (automatic: hold to brake) |
-| `A` / `←`, `D` / `→` | Steer left / right |
+| `↑` | Gear up |
+| `↓` | Gear down (automatic: hold to brake) |
+| `←` / `→` | Steer left / right |
 | `Space` | Jump |
-| `Ctrl` (or `N`) | Special ability: nitrous boost |
-| `Esc` | Pause menu and settings |
-| `G` / `M` | Switch transmission / mute |
-| `C` / `V` | Inside-car view / cycle camera views |
-| Mouse drag / scroll | Look around / zoom |
+| `Ctrl` | Special ability: Hellfire |
+| `C` | Change camera angle |
+| `Esc` | Pause menu and settings (fixed) |
+| `G` / `M` | Switch transmission / mute (when not assigned to an action) |
+| Right-drag / scroll | Look around / zoom |
 
-> If you hold `Ctrl` and then press `W`, the browser closes the tab, and a web page can't block that. Press `W` before `Ctrl`, or use `N` for nitrous.
+With the mouse, holding the left or right half of the screen steers, and double-clicking jumps, the same as touch slide.
 
 ### Gamepad
 
-These are the defaults. You can remap every action except steering in **Settings → Gamepad**.
+These are the defaults. You can remap every action except pause in **Settings → Gamepad**, which shows a drawing of the pad with every button in use glowing and a line from each button to its action. Buttons light up as you press them. PlayStation pads show ✕ ○ □ △.
 
 | Button | Action |
 | --- | --- |
-| Left stick / D-pad ← → | Steer (fixed) |
 | `A` | Gear up (also starts the game) |
 | `B` | Gear down (automatic: hold to brake) |
-| `Y` | Jump |
-| `X` | Special ability: nitrous boost |
-| D-pad ↑ | Change camera angle |
-| `Start` | Pause menu |
+| D-pad ← / → | Steer left / right (the left stick always steers too) |
+| `X` | Jump |
+| `Y` | Special ability: Hellfire |
+| `L1` | Change camera angle |
+| `Start` | Pause menu (fixed) |
 
 ### Touch
 
-| Control | Action |
-| --- | --- |
-| Slide pad ◀ ▶ | Put your thumb on a pad and slide and hold to steer. The further you slide, the sharper the turn |
-| Slide pad ▲ ▼ | Gear up / gear down, one gear per slide (automatic: slide down and hold to brake) |
-| JUMP (bottom corner) | Jump |
-| SPECIAL (other bottom corner) | Nitrous boost |
+Pick a control type in **Settings → Mobile**. The settings page shows a full phone-screen preview of each one.
 
-Portrait shows one slide pad above the buttons. Landscape shows two pads, one for each thumb.
+| Type | Steer | Shift gear | Jump | Hellfire |
+| --- | --- | --- | --- | --- |
+| **Touch slide** | Hold the left / right side of the screen | Swipe up / down (automatic: swipe down and hold to brake) | Double tap, or JUMP | FIRE |
+| **Steering** | Turn the on-screen wheel (bottom right); it springs back | Push / pull the GEAR lever (automatic: pull down and hold to brake) | JUMP (bottom left) | FIRE (bottom left) |
+| **Gyro** | Tilt the phone like a wheel; touch steering is off | Swipe up / down | Double tap, or JUMP | FIRE |
+
+Gyro steering is measured from how you hold the phone when the run starts. **Re-center tilt** in the settings resets it. On iPhone the browser asks for motion access the first time. If no motion sensor answers, the game falls back to holding the screen sides.
 
 ### Settings
 
 Open them from the pause menu, or from **Settings** on the start screen. They're saved in the browser.
 
-- **General:** transmission (automatic / manual), sound.
-- **Touch screen:** orientation (landscape only / portrait + landscape), one or two pads in landscape, which side JUMP and SPECIAL go on, control size, steering sensitivity. In *Landscape only* mode, holding the phone upright shows a "turn your phone" screen. On Android, starting a run also goes fullscreen and locks landscape. iOS can't lock the orientation.
-- **Gamepad:** remap gear up, gear down, jump, special ability, camera and pause. Choose **Change**, then press a button. If that button was already in use, the two actions swap.
+- **Top row:** sound on / off, transmission auto / manual, screen landscape / portrait. In *Landscape*, holding the phone upright shows a "turn your phone" screen. On Android, starting a run also goes fullscreen and locks the orientation you picked. iOS can't lock the orientation.
+- **Desktop:** remap the keyboard. Choose **Change**, then press a key. If that key was already in use, the two actions swap.
+- **Mobile:** control type (Gyro / Steering / Touch slide) with a preview, control size, steering sensitivity.
+- **Gamepad:** remap the pad. Choose **Change**, then press a gamepad button (Start cancels). If that button was already in use, the two actions swap.
 
 ## Gameplay
 
 - **Gearbox:** R, N, 1–5. Pull away in 1st and shift up when the gear number flashes. Stop before you select reverse.
 - **Scoring:** distance, roadkill (chain kills for up to x10), overtakes, close calls and air time from speed breakers.
 - **Hazards:** rear-ending traffic, scraping walls and potholes damage the car. Brutes (the big zombies) only go down if you hit them above about 85 km/h.
-- **Pickups:** amber wrench = hull repair, blue canister = nitrous.
+- **Road:** 2-lane and 4-lane stretches with tapers between them, tunnels and overbridges. Lanes are wider than before and potholes are rarer.
+- **Hellfire (special ability):** every zombie you flatten charges it (6 kills, or 3 brutes). Set it off for a shockwave that blasts away nearby zombies and traffic, then the car burns for 7 seconds: it takes no damage and wrecks anything it touches.
+- **Pickups:** amber wrench = hull repair.
 
 Your best score is saved in the browser's local storage.
 
