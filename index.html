@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Dead Mile Racer: a 3D zombie street racer that runs in your browser. Manual 5-speed gearbox, jumps, traffic and a cockpit view.">
+<meta name="description" content="Dead Mile Racer: a 3D zombie street racer that runs in your browser. Manual 5-speed gearbox, jumps, traffic, tunnels, Hellfire and a cockpit view.">
 <meta name="theme-color" content="#0a100f">
 <meta property="og:title" content="Dead Mile Racer">
 <meta property="og:description" content="A 3D zombie street racer that runs in your browser.">
@@ -53,7 +53,6 @@ html, body { height: 100%; margin: 0; overflow: hidden; background: var(--night)
 .chip.on { opacity: 1; }
 .bar { height: 10px; background: rgba(255,255,255,.08); border: 1px solid var(--line); position: relative; overflow: hidden; }
 .bar > i { position: absolute; inset: 0 auto 0 0; width: 100%; background: var(--sodium); transition: width .12s linear, background .3s; }
-.bar.nitro > i { background: var(--nitro); }
 .bar.low > i { background: var(--blood); animation: pulse .6s infinite alternate; }
 @keyframes pulse { to { opacity: .45; } }
 .barrow { display: grid; gap: 4px; }
@@ -98,27 +97,81 @@ kbd { font-family: var(--hud); font-weight: 700; font-size: 12px; border: 1px so
 .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 button.go { font-family: var(--display); font-size: 22px; letter-spacing: .04em; background: var(--sodium); color: #1a1206; border: 0; padding: 14px 28px; cursor: pointer; clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%); transition: transform .12s, filter .12s; }
 button.go:hover { filter: brightness(1.1); transform: translateX(2px); }
-button.go:focus-visible, button.ghost:focus-visible, .pad button:focus-visible, .topbtns button:focus-visible { outline: 2px solid var(--nitro); outline-offset: 3px; }
+button.go:focus-visible, button.ghost:focus-visible, .pad button:focus-visible, .corner:focus-visible, .tabs button:focus-visible, .maprow button:focus-visible { outline: 2px solid var(--nitro); outline-offset: 3px; }
 button.ghost { font-family: var(--hud); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; background: transparent; color: var(--muted); border: 1px solid var(--line); padding: 10px 14px; cursor: pointer; }
 .best { font-size: 13px; color: var(--muted); letter-spacing: .08em; }
 .best b { color: var(--fg); }
 
-.topbtns { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
-.topbtns button { pointer-events: auto; background: var(--panel); border: 1px solid var(--line); color: var(--muted); font-family: var(--hud); font-weight: 700; font-size: 11px; letter-spacing: .14em; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+/* top corners: pause menu (left), camera angle (right) */
+:root { --ts: 1; --btn: calc(76px * var(--ts)); --sb: env(safe-area-inset-bottom, 0px); }
+@media (max-width: 420px) { :root { --btn: calc(62px * var(--ts)); } }
+.hud { padding-top: calc(env(safe-area-inset-top, 0px) + 62px); }
+.corner { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); display: flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 12px; pointer-events: auto; background: var(--panel); border: 1px solid var(--line); color: var(--fg); font-family: var(--hud); font-weight: 700; font-size: 11px; letter-spacing: .14em; cursor: pointer; white-space: nowrap; }
+.corner svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
+.corner-l { left: max(16px, env(safe-area-inset-left, 0px)); }
+.corner-r { right: max(16px, env(safe-area-inset-right, 0px)); }
+.corner:active { border-color: var(--sodium); }
 
-.pad { position: fixed; left: 0; right: 0; bottom: 0; display: none; justify-content: space-between; align-items: end; padding: 0 max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); pointer-events: none; }
-.touch .pad.live { display: flex; }
-.pad .grp { display: flex; gap: 12px; }
-.pad button { pointer-events: auto; touch-action: none; width: 74px; height: 74px; border-radius: 50%; border: 2px solid var(--line); background: rgba(9,14,13,.55); color: var(--fg); font-family: var(--hud); font-weight: 700; font-size: 13px; letter-spacing: .08em; }
-.pad button.down { background: rgba(255,179,64,.3); border-color: var(--sodium); }
-.pad button.nos { border-color: var(--nitro); color: var(--nitro); }
-.pad svg { width: 28px; height: 28px; fill: currentColor; }
-.touch .hud { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 106px); }
-.pad button.big-btn { width: 84px; height: 84px; font-size: 14px; }
-#swipeRing { position: fixed; left: 0; top: 0; width: 120px; height: 120px; margin: -60px 0 0 -60px; border: 2px solid var(--line); border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity .15s; }
-#swipeRing.on { opacity: 1; }
-#swipeRing i { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: rgba(255,179,64,.35); border: 2px solid var(--sodium); }
-@media (max-width: 460px) { .pad button.big-btn { width: 74px; height: 74px; font-size: 13px; } }
+/* touch layouts (Settings → Mobile):
+   slide: hold the left / right side to steer, swipe up / down to shift, double tap to jump
+   wheel: on-screen steering wheel + gear lever + JUMP / FIRE buttons
+   gyro:  tilt to steer, swipe to shift, double tap to jump */
+:root { --wheel: calc(min(40vh, 250px) * var(--ts)); --zw: clamp(78px, 15vw, 150px); }
+@media (orientation: portrait) { :root { --wheel: calc(min(52vw, 240px) * var(--ts)); --zw: clamp(64px, 19vw, 120px); } }
+.pad { position: fixed; inset: 0; display: none; pointer-events: none; }
+.touch .pad.live { display: block; }
+.pad > * { position: absolute; display: none; }
+.pad.m-slide > .s-slide, .pad.m-wheel > .s-wheel, .pad.m-gyro > .s-gyro, .pad > .s-all { display: grid; }
+.pad .tb, .pad .lever, .pad .wheel { pointer-events: auto; touch-action: none; }
+.pad .tb { width: var(--btn); height: var(--btn); bottom: calc(var(--sb) + 16px); border-radius: 50%; border: 2px solid var(--line); background: rgba(9,14,13,.55); color: var(--fg); font-family: var(--hud); font-weight: 700; font-size: calc(13px * var(--ts)); letter-spacing: .08em; place-items: center; padding: 0; }
+.pad .tb.down { background: rgba(255,179,64,.3); border-color: var(--sodium); }
+.pad .tb.jump { border-color: var(--sodium); color: var(--sodium); }
+.pad .tb.special { --fill: 0; color: #ffb36b; border-color: rgba(255,120,40,.55); background: conic-gradient(rgba(255,100,20,.5) calc(var(--fill) * 1%), rgba(9,14,13,.55) 0); }
+.pad .tb.special.ready, .pad .tb.special.active { color: #ffe08a; border-color: #ff8a1f; animation: fireglow .6s infinite alternate; }
+@keyframes fireglow { from { box-shadow: 0 0 0 0 rgba(255,110,20,.5); } to { box-shadow: 0 0 22px 6px rgba(255,110,20,.65); } }
+/* slide */
+.pad .zone { top: 34%; bottom: calc(var(--sb) + 16px); width: var(--zw); border: 2px dashed rgba(232,236,223,.2); background: rgba(232,236,223,.04); border-radius: 18px; place-content: center; justify-items: center; gap: 4px; color: rgba(232,236,223,.5); font-weight: 700; font-size: 11px; letter-spacing: .16em; }
+.pad .zone b { font-size: 26px; line-height: 1; }
+.pad .zone.on { border-color: var(--sodium); background: rgba(255,179,64,.12); color: var(--sodium); }
+.pad .zl { left: max(10px, env(safe-area-inset-left, 0px)); }
+.pad .zr { right: max(10px, env(safe-area-inset-right, 0px)); }
+.pad.m-slide .jump { left: calc(max(10px, env(safe-area-inset-left, 0px)) + var(--zw) + 14px); }
+.pad.m-slide .special { right: calc(max(10px, env(safe-area-inset-right, 0px)) + var(--zw) + 14px); }
+@media (orientation: portrait) {
+  .pad .zone { top: 30%; bottom: calc(var(--sb) + 30px + var(--btn)); }
+  .pad.m-slide .jump { left: max(16px, env(safe-area-inset-left, 0px)); }
+  .pad.m-slide .special { right: max(16px, env(safe-area-inset-right, 0px)); }
+}
+/* gyro */
+.pad.m-gyro .jump { left: max(16px, env(safe-area-inset-left, 0px)); }
+.pad.m-gyro .special { right: max(16px, env(safe-area-inset-right, 0px)); }
+.pad .tilt { left: 50%; bottom: calc(var(--sb) + 22px); width: min(170px, 40vw); height: 26px; transform: translateX(-50%); border: 1px solid var(--line); border-radius: 13px; background: rgba(9,14,13,.45); place-items: center; font-size: 10px; letter-spacing: .2em; color: var(--muted); font-weight: 700; }
+.pad .tilt i { position: absolute; top: 3px; bottom: 3px; left: 50%; width: 18px; margin-left: -9px; border-radius: 9px; background: var(--sodium); opacity: .85; }
+/* wheel */
+.pad .wheel { right: max(10px, env(safe-area-inset-right, 0px)); bottom: calc(var(--sb) + 10px); width: var(--wheel); height: var(--wheel); border-radius: 50%; background: rgba(9,14,13,.22); }
+.pad .wheel svg { width: 100%; height: 100%; }
+.pad .wheel .rim { fill: none; stroke: rgba(232,236,223,.55); stroke-width: 8; }
+.pad .wheel .spoke { fill: none; stroke: rgba(232,236,223,.4); stroke-width: 6; stroke-linecap: round; }
+.pad .wheel .hub { fill: rgba(9,14,13,.75); stroke: rgba(232,236,223,.45); stroke-width: 2; }
+.pad .wheel .mark { fill: var(--sodium); }
+.pad .wheel.on .rim { stroke: var(--sodium); }
+.pad.m-wheel .tb { width: calc(var(--btn) * .82); height: calc(var(--btn) * .82); font-size: calc(11px * var(--ts)); }
+.pad.m-wheel .jump { left: max(16px, env(safe-area-inset-left, 0px)); }
+.pad.m-wheel .special { left: calc(max(16px, env(safe-area-inset-left, 0px)) + var(--btn) * .82 + 10px); }
+.pad .lever { left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(var(--sb) + 28px + var(--btn) * .82); width: calc(var(--btn) * .8); height: calc(var(--btn) * 1.9); border-radius: 16px; border: 2px solid var(--line); background: rgba(9,14,13,.5); grid-template-rows: auto 1fr auto; justify-items: center; padding: 6px 0; color: var(--muted); font-size: 13px; }
+.pad .lever .lv-slot { width: 6px; border-radius: 3px; background: rgba(0,0,0,.6); }
+.pad .lever .lv-knob { position: absolute; left: 50%; top: 50%; width: 62%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #4d5250, #111413); border: 2px solid var(--sodium); }
+.pad .lever.up .lv-u, .pad .lever.dn .lv-d { color: var(--sodium); }
+.pad .lever b { position: absolute; top: -18px; font-size: 10px; letter-spacing: .18em; color: var(--muted); }
+.touch .hud { padding-bottom: calc(var(--sb) + 28px + var(--btn)); }
+.touch .hint { bottom: calc(var(--sb) + 32px + var(--btn)); }
+.touch.tm-wheel .hud { padding-bottom: calc(var(--sb) + 20px + max(var(--wheel), var(--btn) * 2.75)); }
+.touch.tm-wheel .hint { bottom: calc(var(--sb) + 24px + var(--wheel)); }
+#tapFx { position: fixed; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; border: 2px solid var(--sodium); pointer-events: none; opacity: 0; }
+#tapFx.go { animation: tapfx .35s ease-out; }
+@keyframes tapfx { from { opacity: .8; transform: scale(.5); } to { opacity: 0; transform: scale(1.4); } }
+.bar.fire > i { background: linear-gradient(90deg, #d4323a, #ff8a1f, #ffd25a); }
+.bar.fire.ready { border-color: #ff8a1f; animation: fireglow .6s infinite alternate; }
 .screen { align-items: safe center; }
 body { touch-action: manipulation; }
 
@@ -131,19 +184,74 @@ body { touch-action: manipulation; }
 @keyframes tilt { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
 @media (orientation: portrait) { .touch:not(.any-orient) #rotate { display: flex; } }
 #rotate button.ghost { margin-top: 6px; }
-.opt-touch { display: none !important; }
-.touch .opt-touch { display: flex !important; }
-.setting { gap: 10px; font-size: 13px; color: var(--muted); letter-spacing: .08em; }
-.setting .label { margin-right: 2px; }
-.seg { display: inline-flex; border: 1px solid var(--line); }
+/* pause menu / settings */
+.card.wide { width: min(900px, 100%); }
+.quick { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: end; padding-bottom: 4px; }
+.qset { display: grid; gap: 6px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); }
+.tabs button { font-family: var(--hud); font-weight: 700; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; background: transparent; color: var(--muted); border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 10px 14px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.tabs button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--sodium); }
+.tabpane { display: grid; gap: 14px; }
+.tabpane[hidden] { display: none; }
+.setrow { display: flex; align-items: center; justify-content: space-between; gap: 8px 14px; flex-wrap: wrap; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); }
 .seg button { font-family: var(--hud); font-weight: 700; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; background: transparent; color: var(--muted); border: 0; padding: 9px 12px; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--sodium); color: #1a1206; }
 .seg button:focus-visible { outline: 2px solid var(--nitro); outline-offset: 2px; }
+.maprows { display: grid; gap: 6px; }
+.maprow { display: grid; grid-template-columns: 1fr auto 86px; align-items: center; gap: 12px; font-size: 14px; padding: 6px 0; border-bottom: 1px solid rgba(232,236,223,.06); }
+.maprow kbd { min-width: 72px; text-align: center; }
+kbd.wait { color: var(--sodium); border-color: var(--sodium); animation: pulse .5s infinite alternate; }
+.maprow button.ghost, .gprow button.ghost { padding: 6px 10px; font-size: 11px; }
+.fixedtag { font-size: 11px; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; text-align: center; }
+/* gamepad diagram: list of actions on both sides, thin leader lines to the buttons */
+.gpwrap { position: relative; display: grid; grid-template-columns: minmax(170px, 1fr) minmax(250px, 1.5fr) minmax(170px, 1fr); gap: 18px; align-items: center; }
+.gpcol { display: grid; gap: 8px; position: relative; z-index: 1; }
+.gprow { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "n b" "c c"; gap: 6px 8px; padding: 8px 10px; border: 1px solid var(--line); background: rgba(9,14,13,.6); font-size: 13px; align-items: center; }
+.gprow .n { grid-area: n; font-weight: 600; }
+.gprow kbd { grid-area: b; }
+.gprow button, .gprow .fixedtag { grid-area: c; justify-self: start; }
+.gprow.hl { border-color: var(--sodium); }
+.gpimg { position: relative; z-index: 1; }
+.gpsvg { width: 100%; height: auto; display: block; overflow: visible; }
+.gpsvg .body { fill: #171c1b; stroke: #3c4542; stroke-width: 2; }
+.gpsvg .well { fill: #0d1110; stroke: #2b3331; stroke-width: 1.5; }
+.gpsvg .btn { fill: #222927; stroke: #4c5653; stroke-width: 1.5; transition: fill .08s; }
+.gpsvg .btn.mapped { stroke: var(--sodium); stroke-width: 2; filter: drop-shadow(0 0 4px rgba(255,179,64,.9)); }
+.gpsvg .btn.hl { fill: rgba(255,179,64,.35); }
+.gpsvg .btn.live { fill: var(--sodium); }
+.gpsvg .btn.wait { stroke: var(--nitro); animation: pulse .35s infinite alternate; }
+.gpsvg text { fill: var(--fg); font: 700 11px var(--hud); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.gplines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 2; }
+.gplines path { fill: none; stroke: rgba(255,179,64,.6); stroke-width: 1; }
+.gplines circle { fill: var(--sodium); }
+@media (max-width: 760px) {
+  .gpwrap { grid-template-columns: 1fr 1fr; }
+  .gpimg { grid-column: 1 / -1; order: -1; max-width: 420px; justify-self: center; width: 100%; }
+  .gplines { display: none; }
+}
+@media (max-width: 460px) { .gpwrap { grid-template-columns: 1fr; } }
+/* phone mockup of the chosen touch layout */
+.mockwrap { display: grid; gap: 16px; }
+.mock { display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr); gap: 16px; align-items: end; }
+.mock figure { margin: 0; display: grid; gap: 6px; justify-items: center; opacity: .6; transition: opacity .2s; }
+.mock figure.sel { opacity: 1; }
+.mock figcaption { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.mock figure.sel figcaption { color: var(--sodium); }
+.mock svg { width: 100%; height: auto; display: block; max-height: 380px; }
+.mockdesc { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; line-height: 1.45; color: var(--fg); }
+.mockdesc b { color: var(--sodium); }
+@media (max-width: 480px) { .mock { grid-template-columns: 1fr; } .mock figure:last-child { max-width: 220px; justify-self: center; width: 100%; } }
+.seg.big button { padding: 11px 14px; display: inline-flex; gap: 8px; align-items: center; }
+.seg.big svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 @media (prefers-reduced-motion: reduce) { #rotate svg { animation: none; transform: rotate(-90deg); } }
 
 /* landscape phones are short: shrink the HUD and pad so the road stays visible */
 @media (max-height: 500px) and (orientation: landscape) {
-  .hud { padding-top: calc(env(safe-area-inset-top, 0px) + 8px); }
+  :root { --btn: calc(60px * var(--ts)); }
+  .hud { padding-top: calc(env(safe-area-inset-top, 0px) + 54px); }
+  .corner { top: calc(env(safe-area-inset-top, 0px) + 8px); min-height: 36px; }
   .big { font-size: 24px; }
   .speed { font-size: 40px; }
   .gear { font-size: 32px; padding: 3px 7px 2px; }
@@ -151,12 +259,12 @@ body { touch-action: manipulation; }
   .bl { width: min(200px, 30vw); gap: 6px; }
   .label { font-size: 10px; }
   .sub { font-size: 12px; }
-  .pad { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
-  .pad button.big-btn { width: 70px; height: 70px; font-size: 13px; }
-  .touch .hud { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 82px); }
-  .touch .hint { bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); }
-  .topbtns { top: calc(env(safe-area-inset-top, 0px) + 8px); }
-  .topbtns button { padding: 5px 8px; font-size: 10px; }
+  .pad .tb { bottom: calc(var(--sb) + 10px); }
+  .pad .lever { height: calc(var(--btn) * 1.3); bottom: calc(var(--sb) + 20px + var(--btn) * .82); }
+  .touch .hud { padding-bottom: calc(var(--sb) + 18px + var(--btn)); }
+  .touch .hint { bottom: calc(var(--sb) + 20px + var(--btn)); }
+  .touch.tm-wheel .hud { padding-bottom: calc(var(--sb) + 14px + max(var(--wheel), var(--btn) * 2.3)); }
+  .bl { width: min(170px, 24vw); }
   .card { gap: 12px; }
   h1 { font-size: 52px; }
   h2 { font-size: 44px; }
@@ -164,7 +272,7 @@ body { touch-action: manipulation; }
   .keys { padding-block: 10px; gap: 6px 12px; }
 }
 
-@media (max-width: 520px) { .stats b { font-size: 22px; } .keys { font-size: 13px; } .topbtns { top: calc(env(safe-area-inset-top, 0px) + 92px); } }
+@media (max-width: 520px) { .stats b { font-size: 22px; } .keys { font-size: 13px; } }
 @media (prefers-reduced-motion: reduce) { .toast.show { animation-duration: .01s; opacity: 1; } .bar.low > i { animation: none; } }
 </style>
 </head>
@@ -184,7 +292,8 @@ body { touch-action: manipulation; }
   </div>
   <div class="bl">
     <div class="barrow"><span class="label">Hull</span><div class="bar" id="hpbar"><i id="hp"></i></div></div>
-    <div class="barrow"><span class="label">Nitrous</span><div class="bar nitro"><i id="nos"></i></div></div>
+    <div class="barrow"><span class="label" id="fireLabel">Hellfire</span><div class="bar fire" id="firebar"><i id="fire"></i></div></div>
+    <span class="sub" id="laneInfo">4 LANES</span>
   </div>
   <div class="br">
     <div class="tach" id="tach"><i id="rpmBar"></i></div>
@@ -195,22 +304,25 @@ body { touch-action: manipulation; }
     <span class="unit" id="gbMode">MANUAL · W ▲ · S ▼</span>
   </div>
 </div>
-<div class="topbtns" id="topbtns" hidden>
-  <button id="pauseBtn" type="button">PAUSE</button>
-  <button id="viewBtn" type="button">VIEW: CHASE</button>
-  <button id="gearBtn" type="button">GEARS: MANUAL</button>
-  <button id="muteBtn" type="button">SOUND ON</button>
+<div id="topbtns" hidden>
+  <button class="corner corner-l" id="pauseBtn" type="button" aria-label="Pause menu and settings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg><span>MENU</span></button>
+  <button class="corner corner-r" id="viewBtn" type="button" aria-label="Change camera angle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span id="viewName">CHASE</span></button>
 </div>
 
 <div class="toast" id="toast"></div>
 <div class="hint" id="hint" hidden>Drag to look around · scroll to zoom · C for inside-car view</div>
 <div id="flash"></div>
 
-<div class="pad" id="pad">
-  <div class="grp"><button type="button" id="tJump" class="big-btn">JUMP</button></div>
-  <div class="grp"><button type="button" id="tNitro" class="big-btn nos">NOS</button></div>
+<div class="pad m-slide" id="pad">
+  <div class="zone zl s-slide" id="zoneL" aria-hidden="true"><b>◀</b><span>HOLD</span></div>
+  <div class="zone zr s-slide" id="zoneR" aria-hidden="true"><b>▶</b><span>HOLD</span></div>
+  <div class="lever s-wheel" id="tLever" role="slider" aria-label="Gear lever: push up to shift up, pull down to shift down"><b>GEAR</b><span class="lv-u">▲</span><i class="lv-slot"></i><span class="lv-d">▼</span><i class="lv-knob" id="leverKnob"></i></div>
+  <div class="wheel s-wheel" id="tWheel" aria-label="Steering wheel: turn to steer"><svg viewBox="-50 -50 100 100" aria-hidden="true"><circle class="rim" r="43"/><path class="spoke" d="M-40 6 L-13 4 M40 6 L13 4 M0 14 L0 39"/><circle class="hub" r="13"/><rect class="mark" x="-3.5" y="-48" width="7" height="10" rx="2"/></svg></div>
+  <div class="tilt s-gyro" id="tTilt" aria-hidden="true"><i id="tiltNeedle"></i><span>TILT</span></div>
+  <button type="button" id="tJump" class="tb jump s-all">JUMP</button>
+  <button type="button" id="tSpecial" class="tb special s-all" aria-label="Hellfire special ability">FIRE</button>
 </div>
-<div id="swipeRing" aria-hidden="true"><i></i></div>
+<div id="tapFx"></div>
 
 <div id="rotate" role="alert">
   <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="15" y="5" width="18" height="38" rx="3"/><path d="M21 38h6"/></svg>
@@ -222,29 +334,13 @@ body { touch-action: manipulation; }
   <div class="card">
     <span class="kicker">Route 9 · 02:40 AM · Sector quarantined</span>
     <h1>DEAD<br><span>MILE</span></h1>
-    <p class="lede">The city fell at midnight, but the night traffic still runs. Weave through three lanes, launch off speed breakers, dodge the potholes, and flatten any shambler that steps off the curb.</p>
-    <div class="keys">
-      <span class="k-desk"><kbd>W</kbd> <kbd>S</kbd> / <kbd>↑</kbd> <kbd>↓</kbd></span><span class="k-desk">Gear up / gear down (automatic: hold down to brake)</span>
-      <span class="k-desk"><kbd>A</kbd> <kbd>D</kbd> / <kbd>←</kbd> <kbd>→</kbd></span><span class="k-desk">Steer left / right</span>
-      <span class="k-desk"><kbd>Space</kbd></span><span class="k-desk">Jump</span>
-      <span class="k-desk"><kbd>Ctrl</kbd></span><span class="k-desk">Special ability: nitrous boost (also <kbd>N</kbd>)</span>
-      <span class="k-desk"><kbd>G</kbd></span><span class="k-desk">Switch manual / automatic transmission</span>
-      <span class="k-desk"><kbd>C</kbd> <kbd>V</kbd></span><span class="k-desk">Inside-car view / cycle camera views</span>
-      <span class="k-desk"><kbd>P</kbd> <kbd>M</kbd></span><span class="k-desk">Pause / mute</span>
-      <span class="k-desk"><kbd>Gamepad</kbd></span><span class="k-desk">Stick or D-pad steer · <kbd>A</kbd> gear up · <kbd>B</kbd> gear down · <kbd>Y</kbd> jump · <kbd>X</kbd> nitrous · D-pad <kbd>↑</kbd> camera · <kbd>Start</kbd> pause</span>
-      <span class="k-touch"><kbd>Slide ◀ ▶</kbd><span>Steer: slide and hold left or right</span><kbd>Slide ▲ ▼</kbd><span>Gear up / gear down (automatic: slide down and hold to brake)</span><kbd>JUMP</kbd><span>Bottom left: hop over potholes and zombies</span><kbd>NOS</kbd><span>Bottom right: special ability, nitrous boost</span></span>
-    </div>
-    <p class="note k-desk">The car drives itself. <b>Manual:</b> each gear (R · N · 1–5) has a top speed, so shift up when the gear number flashes and shift down to slow; N rolls to a stop and R needs you stopped. <b>Automatic:</b> gears change for you; hold <b>S</b> to brake, keep holding at a stop to reverse. Holding Ctrl and then pressing W closes the browser tab, so press W first, or use N for nitrous.</p>
+    <p class="lede">The city fell at midnight, but the night traffic still runs. The road swells from two lanes to four and back, dives through tunnels and under overbridges. Flatten shamblers to charge <b style="color:var(--sodium)">Hellfire</b>, then set the car ablaze and wreck everything in your path.</p>
+    <div class="keys" id="menuKeys"></div>
+    <p class="note k-desk">The car accelerates by itself. <b>Manual:</b> each gear (R · N · 1–5) has a top speed, so shift up when the gear number flashes and shift down to slow; N rolls to a stop and R needs you stopped. <b>Automatic:</b> gears change for you; hold gear-down to brake, keep holding at a stop to reverse.</p>
     <div class="row">
       <button class="go" id="startBtn" type="button">START ENGINE</button>
+      <button class="ghost" id="menuSettingsBtn" type="button">Settings</button>
       <span class="best">Best run <b id="bestMenu">0</b></span>
-    </div>
-    <div class="row setting opt-touch">
-      <span class="label">Screen</span>
-      <span class="seg orient-seg" role="group" aria-label="Screen orientation">
-        <button type="button" data-orient="landscape">Landscape only</button>
-        <button type="button" data-orient="any">Portrait + landscape</button>
-      </span>
     </div>
   </div>
 </div>
@@ -266,19 +362,71 @@ body { touch-action: manipulation; }
 </div>
 
 <div class="screen" id="paused" hidden>
-  <div class="card">
-    <span class="kicker">Engine idling</span>
-    <h2 style="color:var(--fg)">PAUSED</h2>
+  <div class="card wide">
+    <span class="kicker" id="pauseKicker">Engine idling</span>
+    <h2 id="pauseTitle" style="color:var(--fg)">PAUSED</h2>
     <div class="row">
       <button class="go" id="resumeBtn" type="button">RESUME</button>
       <button class="ghost" id="quitBtn" type="button">Back to menu</button>
     </div>
-    <div class="row setting opt-touch">
-      <span class="label">Screen</span>
-      <span class="seg orient-seg" role="group" aria-label="Screen orientation">
-        <button type="button" data-orient="landscape">Landscape only</button>
-        <button type="button" data-orient="any">Portrait + landscape</button>
-      </span>
+    <div class="quick">
+      <div class="qset"><span class="label">Sound</span><span class="seg" data-set="sound" role="group" aria-label="Sound"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></span></div>
+      <div class="qset"><span class="label">Transmission</span><span class="seg" data-set="trans" role="group" aria-label="Transmission"><button type="button" data-v="auto">Auto</button><button type="button" data-v="manual">Manual</button></span></div>
+      <div class="qset"><span class="label">Screen</span><span class="seg" data-set="orient" role="group" aria-label="Screen"><button type="button" data-v="landscape">Landscape</button><button type="button" data-v="portrait">Portrait</button></span></div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Controls">
+      <button type="button" role="tab" data-tab="desktop" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h1M10 10h1M14 10h1M18 10h1M7 14h10"/></svg>Desktop</button>
+      <button type="button" role="tab" data-tab="mobile" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>Mobile</button>
+      <button type="button" role="tab" data-tab="gamepad" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10a5 5 0 0 1 4.6 6.9l-1 2.3a2 2 0 0 1-3.4.4L15.5 16h-7l-1.7 1.6a2 2 0 0 1-3.4-.4l-1-2.3A5 5 0 0 1 7 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="16" cy="11.5" r=".6"/><circle cx="17.5" cy="13.5" r=".6"/></svg>Gamepad</button>
+    </div>
+    <div class="tabpane" data-tab="desktop">
+      <div class="maprows" id="kbRows"></div>
+      <div class="row"><button class="ghost" id="kbReset" type="button">Reset to defaults</button></div>
+      <p class="note">Choose <b>Change</b>, then press the key you want. If another action already uses that key, the two swap. Fixed keys: <b>G</b> switches transmission, <b>M</b> mutes, as long as they aren't assigned above. Right-drag to look around, scroll to zoom.</p>
+    </div>
+    <div class="tabpane" data-tab="mobile" hidden>
+      <div class="setrow"><span class="label">Control type</span><span class="seg big" data-set="touch" role="group" aria-label="Touch control type">
+        <button type="button" data-v="gyro"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="4" width="8" height="16" rx="1.5" transform="rotate(-18 12 12)"/><path d="M3 9a9 9 0 0 1 3-4M21 15a9 9 0 0 1-3 4"/></svg>Gyro</button>
+        <button type="button" data-v="wheel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M3.5 11l6-.5M20.5 11l-6-.5M12 14.5V21"/></svg>Steering</button>
+        <button type="button" data-v="slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/></svg>Touch slide</button>
+      </span></div>
+      <div class="mockwrap" id="mockWrap"><div class="mock" id="mock" role="img" aria-label="Phone screen showing the chosen touch controls"></div><ul class="mockdesc" id="mockDesc"></ul></div>
+      <div class="setrow" id="gyroRow"><span class="label" id="gyroStatus">Tilt: hold the phone the way you drive</span><button class="ghost" id="gyroCenter" type="button">Re-center tilt</button></div>
+      <div class="setrow"><span class="label">Control size</span><span class="seg" data-set="size" role="group" aria-label="Control size"><button type="button" data-v="s">Small</button><button type="button" data-v="m">Medium</button><button type="button" data-v="l">Large</button></span></div>
+      <div class="setrow"><span class="label">Steering</span><span class="seg" data-set="sens" role="group" aria-label="Steering"><button type="button" data-v="low">Gentle</button><button type="button" data-v="mid">Normal</button><button type="button" data-v="high">Sharp</button></span></div>
+    </div>
+    <div class="tabpane" data-tab="gamepad" hidden>
+      <p class="note" id="gpStatus">No gamepad detected. Connect one and press any button.</p>
+      <div class="gpwrap" id="gpWrap">
+        <div class="gpcol" id="gpColL"></div>
+        <div class="gpimg">
+          <svg class="gpsvg" id="gpSvg" viewBox="0 0 400 260" role="img" aria-label="Gamepad. Buttons in use glow; buttons you press light up.">
+            <rect class="btn" data-b="6" x="92" y="2" width="46" height="20" rx="8"/><text data-l="6" x="115" y="12">L2</text>
+            <rect class="btn" data-b="7" x="262" y="2" width="46" height="20" rx="8"/><text data-l="7" x="285" y="12">R2</text>
+            <rect class="btn" data-b="4" x="68" y="22" width="86" height="16" rx="7"/><text data-l="4" x="111" y="30">L1</text>
+            <rect class="btn" data-b="5" x="246" y="22" width="86" height="16" rx="7"/><text data-l="5" x="289" y="30">R1</text>
+            <path class="body" d="M120 40Q200 28 280 40Q330 46 352 90Q380 150 388 210Q392 248 362 252Q336 254 318 220L296 182Q290 172 276 172L124 172Q110 172 104 182L82 220Q64 254 38 252Q8 248 12 210Q20 150 48 90Q70 46 120 40Z"/>
+            <circle class="well" cx="108" cy="84" r="27"/><g data-stick="0"><circle class="btn" data-b="10" cx="108" cy="84" r="18"/><text data-l="10" x="108" y="84">L3</text></g>
+            <circle class="well" cx="250" cy="128" r="25"/><g data-stick="1"><circle class="btn" data-b="11" cx="250" cy="128" r="17"/><text data-l="11" x="250" y="128">R3</text></g>
+            <rect class="well" x="116" y="94" width="68" height="68" rx="12"/>
+            <rect class="btn" data-b="12" x="141" y="98" width="18" height="22" rx="3"/><text x="150" y="109">▲</text>
+            <rect class="btn" data-b="13" x="141" y="136" width="18" height="22" rx="3"/><text x="150" y="147">▼</text>
+            <rect class="btn" data-b="14" x="120" y="119" width="22" height="18" rx="3"/><text x="131" y="128">◀</text>
+            <rect class="btn" data-b="15" x="158" y="119" width="22" height="18" rx="3"/><text x="169" y="128">▶</text>
+            <circle class="btn" data-b="3" cx="292" cy="60" r="12"/><text data-l="3" x="292" y="60">Y</text>
+            <circle class="btn" data-b="1" cx="316" cy="84" r="12"/><text data-l="1" x="316" y="84">B</text>
+            <circle class="btn" data-b="0" cx="292" cy="108" r="12"/><text data-l="0" x="292" y="108">A</text>
+            <circle class="btn" data-b="2" cx="268" cy="84" r="12"/><text data-l="2" x="268" y="84">X</text>
+            <rect class="btn" data-b="8" x="163" y="78" width="18" height="11" rx="5"/>
+            <rect class="btn" data-b="9" x="219" y="78" width="18" height="11" rx="5"/>
+            <circle class="btn" data-b="16" cx="200" cy="56" r="10"/>
+          </svg>
+        </div>
+        <div class="gpcol" id="gpColR"></div>
+        <svg class="gplines" id="gpLines" aria-hidden="true"></svg>
+      </div>
+      <div class="row"><button class="ghost" id="gpReset" type="button">Reset to defaults</button></div>
+      <p class="note">Choose <b>Change</b>, then press the gamepad button you want; <b>Start</b> cancels. If another action already uses that button, the two swap. The left stick (<b>L3</b>) always steers left / right as well.</p>
     </div>
   </div>
 </div>
@@ -315,7 +463,48 @@ if (typeof THREE === 'undefined') {
 }
 
 /* ---------- constants ---------- */
-const LANE = 4.1, ROAD_HALF = 6.2, WALK_OUT = 10, WALL = 9.3, CH = 30, STEP = 2, CURB_Y = 0.24;
+const LANE = 5.0, CH = 30, STEP = 2, CURB_Y = 0.24;
+const HALF2 = LANE + 1.1, HALF4 = 2 * LANE + 1.1;   // road half-width with 2 / 4 lanes
+const WALL_OFF = 3.1, WALK_OFF = 3.8, TAPER = 60, TUN_H = 7.4;
+
+/* ---------- road layout: 2 / 4 lane stretches, tapers between them, tunnels ---------- */
+// Lanes are numbered 0..3 from left to right; 1 and 2 always exist, 0 and 3 only on 4-lane stretches.
+const LAY = [];
+function ensureLayout(s) {
+  while (!LAY.length || LAY[LAY.length - 1].s1 < s + 60) {
+    const prev = LAY[LAY.length - 1];
+    if (!prev) { LAY.push({ s0: -1e4, s1: rand(520, 720), lanes: 4, from: 4, tunnel: false }); continue; }
+    const s0 = prev.s1;
+    if (!prev.tunnel && Math.random() < 0.32) { LAY.push({ s0, s1: s0 + rand(150, 260), lanes: prev.lanes, from: prev.lanes, tunnel: true }); continue; }
+    const lanes = Math.random() < 0.75 ? (prev.lanes === 4 ? 2 : 4) : prev.lanes;
+    LAY.push({ s0, s1: s0 + rand(280, 560), lanes, from: prev.lanes, tunnel: false });
+  }
+}
+function segAt(s) {
+  ensureLayout(s);
+  for (let i = LAY.length - 1; i >= 0; i--) if (LAY[i].s0 <= s) return LAY[i];
+  return LAY[0];
+}
+function w4At(s) {   // 0 = two lanes, 1 = four lanes, smooth in between
+  const g = segAt(s), a = g.from === 4 ? 1 : 0, b = g.lanes === 4 ? 1 : 0;
+  if (a === b) return b;
+  const t = clamp((s - g.s0) / TAPER, 0, 1);
+  return a + (b - a) * t * t * (3 - 2 * t);
+}
+const halfAt = s => HALF2 + (HALF4 - HALF2) * w4At(s);
+const wallAt = s => halfAt(s) + WALL_OFF;
+const walkAt = s => halfAt(s) + WALK_OFF;
+const inTunnel = s => segAt(s).tunnel;
+const inTaper = s => { const w = w4At(s); return w > 0.001 && w < 0.999; };
+const laneD = i => (i - 1.5) * LANE;
+const laneOpen = (i, s) => i === 1 || i === 2 || w4At(s) > 0.98;
+function laneOpenRange(i, a, b) {
+  if (i === 1 || i === 2) return true;
+  for (let s = a; s < b; s += 8) if (w4At(s) <= 0.98) return false;
+  return w4At(b) > 0.98;
+}
+const openLanes = (a, b) => [0, 1, 2, 3].filter(i => laneOpenRange(i, a, b));
+function pruneLayout(sMin) { while (LAY.length > 2 && LAY[1].s1 < sMin) LAY.shift(); }
 
 /* ---------- renderer / scene ---------- */
 const renderer = new THREE.WebGLRenderer({ antialias: !isTouch, powerPreference: 'high-performance' });
@@ -328,7 +517,7 @@ const FOG = 0x0c1413;
 scene.background = new THREE.Color(FOG);
 scene.fog = new THREE.Fog(FOG, 24, 220);
 const camera = new THREE.PerspectiveCamera(66, innerWidth / innerHeight, 0.1, 520);
-scene.add(new THREE.HemisphereLight(0x5d6f8c, 0x20160c, 0.62));
+scene.add(new THREE.HemisphereLight(0x5d6f8c, 0x20160c, 0.55));
 const moonLight = new THREE.DirectionalLight(0xa8b8ff, 0.42);
 moonLight.position.set(-40, 80, 30);
 scene.add(moonLight);
@@ -358,11 +547,27 @@ const roadTex = canvasTex(256, 256, (g, w, h) => {
   g.fillStyle = '#1c1f20'; g.fillRect(0, 0, w, h);
   for (let i = 0; i < 3000; i++) { const v = 18 + Math.random() * 30 | 0; g.fillStyle = `rgb(${v},${v},${v + 3})`; g.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
   for (let i = 0; i < 6; i++) { g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(Math.random() * w, Math.random() * h, 16 + Math.random() * 50, 8 + Math.random() * 30); }
-  const u = w / (ROAD_HALF * 2), o = ROAD_HALF;
-  g.fillStyle = '#cfcab9';
-  g.fillRect((0.35) * u, 0, 0.18 * u, h); g.fillRect((2 * o - 0.53) * u, 0, 0.18 * u, h);
-  for (const x of [-LANE / 2, LANE / 2]) g.fillRect((o + x - 0.08) * u, 0, 0.16 * u, h * 0.34);
 });
+// lane dashes: 40% paint, rest see-through (alphaTest)
+const dashTex = canvasTex(8, 64, (g) => { g.clearRect(0, 0, 8, 64); g.fillStyle = '#fff'; g.fillRect(0, 0, 8, 26); });
+const tileTex = canvasTex(128, 128, (g, w, h) => {
+  g.fillStyle = '#8f8c82'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 700; i++) { const v = 120 + Math.random() * 30 | 0; g.fillStyle = `rgb(${v},${v - 2},${v - 8})`; g.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
+  g.strokeStyle = '#5f5d56'; g.lineWidth = 2;
+  for (let i = 0; i <= 4; i++) { g.beginPath(); g.moveTo(0, i * 32); g.lineTo(w, i * 32); g.stroke(); g.beginPath(); g.moveTo(i * 32, 0); g.lineTo(i * 32, h); g.stroke(); }
+  g.fillStyle = '#d4a41c'; g.fillRect(0, 0, 10, h);
+});
+const haloTex = canvasTex(64, 64, (g) => {
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(255,255,255,.45)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+});
+const beamTex = canvasTex(4, 64, (g) => {
+  const gr = g.createLinearGradient(0, 0, 0, 64);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.5, 'rgba(255,255,255,.35)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 4, 64);
+});
+beamTex.wrapS = beamTex.wrapT = THREE.ClampToEdgeWrapping;
 const walkTex = canvasTex(128, 128, (g, w, h) => {
   g.fillStyle = '#3a3e3b'; g.fillRect(0, 0, w, h);
   for (let i = 0; i < 900; i++) { const v = 45 + Math.random() * 25 | 0; g.fillStyle = `rgb(${v},${v + 2},${v})`; g.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
@@ -457,19 +662,24 @@ function worldAt(s, d, out) {
 function pruneTrack(sMin) {
   const drop = Math.floor(sMin / STEP) - TR.base;
   if (drop > 60) { for (const a of ['x', 'z', 'th', 'k']) TR[a].splice(0, drop); TR.base += drop; }
+  pruneLayout(sMin);
 }
-function resetTrack() { TR.base = 0; TR.x.length = TR.z.length = TR.th.length = TR.k.length = 0; section = null; queue.length = 0; }
+function resetTrack() { TR.base = 0; TR.x.length = TR.z.length = TR.th.length = TR.k.length = 0; section = null; queue.length = 0; LAY.length = 0; }
 
 const P = { x: 0, z: 0, th: 0, k: 0 }, Q = { x: 0, z: 0, th: 0, k: 0 }, W = { x: 0, z: 0, th: 0, k: 0 };
-function ribbon(s0, s1, d1, y1, d2, y2, vScale) {
-  const n = Math.round((s1 - s0) / STEP) + 1;
+// A strip that follows the track. d1 / d2 are lateral offsets (numbers or functions of s);
+// keep d1 < d2 for an upward-facing surface. uScale maps the lateral offset to texture u.
+function ribbon(s0, s1, d1, y1, d2, y2, vScale, uScale) {
+  const D1 = typeof d1 === 'function' ? d1 : () => d1, D2 = typeof d2 === 'function' ? d2 : () => d2;
+  const n = Math.max(2, Math.round((s1 - s0) / STEP) + 1), ds = (s1 - s0) / (n - 1);
   const pos = new Float32Array(n * 6), uv = new Float32Array(n * 4), idx = [];
   for (let i = 0; i < n; i++) {
-    const s = s0 + i * STEP;
+    const s = s0 + i * ds;
     pose(s, Q);
+    const a = D1(s), b = D2(s);
     const c = Math.cos(Q.th), sn = Math.sin(Q.th);
-    pos.set([Q.x + c * d1, y1, Q.z - sn * d1, Q.x + c * d2, y2, Q.z - sn * d2], i * 6);
-    uv.set([0, s / vScale, 1, s / vScale], i * 4);
+    pos.set([Q.x + c * a, y1, Q.z - sn * a, Q.x + c * b, y2, Q.z - sn * b], i * 6);
+    uv.set([uScale ? a / uScale : 0, s / vScale, uScale ? b / uScale : 1, s / vScale], i * 4);
     if (i < n - 1) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
   }
   const g = new THREE.BufferGeometry();
@@ -481,22 +691,34 @@ function ribbon(s0, s1, d1, y1, d2, y2, vScale) {
 }
 
 /* ---------- street chunks ---------- */
-const roadMat = new THREE.MeshLambertMaterial({ map: roadTex });
-const walkMat = new THREE.MeshLambertMaterial({ map: walkTex });
+const roadMat = new THREE.MeshPhongMaterial({ map: roadTex, shininess: 22, specular: 0x2a2a2a });
+roadTex.repeat.set(1, 1);
+const walkMat = new THREE.MeshPhongMaterial({ map: walkTex, shininess: 6, specular: 0x111111 });
 const curbMat = new THREE.MeshLambertMaterial({ color: 0x6b6a62, side: THREE.DoubleSide });
-const poleGeo = new THREE.CylinderGeometry(0.08, 0.11, 6.2, 6);
+const paintOpts = { color: 0xe6e2d2, emissive: 0x24241e, shininess: 12, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 };
+const lineMat = new THREE.MeshPhongMaterial(paintOpts);
+const laneDashMat = new THREE.MeshPhongMaterial(Object.assign({ map: dashTex, alphaTest: 0.5 }, paintOpts));
+const poleGeo = new THREE.CylinderGeometry(0.09, 0.13, 7.0, 6);
 const metalMat = new THREE.MeshLambertMaterial({ color: 0x2b2f30 });
-const lampOn = new THREE.MeshBasicMaterial({ color: 0xffc061 });
+const lampOn = new THREE.MeshBasicMaterial({ color: 0xffd08a });
 const lampOff = new THREE.MeshLambertMaterial({ color: 0x3a3428 });
-const poolGeo = new THREE.CircleGeometry(4.6, 24); poolGeo.rotateX(-Math.PI / 2);
-const poolMat = new THREE.MeshBasicMaterial({ color: 0xff9d2e, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false });
-const bumpGeo = new THREE.CylinderGeometry(1, 1, ROAD_HALF * 2, 12, 1, false, 0, Math.PI);
+const haloMat = new THREE.SpriteMaterial({ map: haloTex, color: 0xffb860, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
+const poolGeo = new THREE.CircleGeometry(5.2, 24); poolGeo.rotateX(-Math.PI / 2);
+const poolMat = new THREE.MeshBasicMaterial({ color: 0xff9d2e, transparent: true, opacity: 0.07, blending: THREE.AdditiveBlending, depthWrite: false });
+const bumpGeo = new THREE.CylinderGeometry(1, 1, 1, 12, 1, false, 0, Math.PI);
 bumpGeo.rotateZ(Math.PI / 2); bumpGeo.scale(1, 0.3, 0.9);
 const bumpMat = new THREE.MeshLambertMaterial({ map: stripeTex });
 const signMat = new THREE.MeshLambertMaterial({ color: 0xe3b21c, emissive: 0x3a2a00 });
 const signPost = new THREE.CylinderGeometry(0.05, 0.05, 2.4, 5);
 const holeMat = new THREE.MeshBasicMaterial({ color: 0x050606 });
 const holeRimMat = new THREE.MeshLambertMaterial({ color: 0x3a3a35 });
+const tunWallMat = new THREE.MeshPhongMaterial({ map: tileTex, shininess: 30, specular: 0x333333, side: THREE.DoubleSide });
+const tunRoofMat = new THREE.MeshLambertMaterial({ color: 0x24282a, side: THREE.DoubleSide });
+const tunLightMat = new THREE.MeshBasicMaterial({ color: 0xfff1d0 });
+const concreteMat = new THREE.MeshLambertMaterial({ color: 0x6a6c66 });
+const concreteDark = new THREE.MeshLambertMaterial({ color: 0x3e413e });
+const hillMat = new THREE.MeshLambertMaterial({ color: 0x1d2420, side: THREE.DoubleSide });
+const railMat = new THREE.MeshLambertMaterial({ color: 0x9a9c94 });
 function holeGeo(r) {
   const g = new THREE.CircleGeometry(r, 12);
   const p = g.attributes.position;
@@ -508,57 +730,158 @@ function holeGeo(r) {
 const chunks = new Map();
 let feats = [];
 let flickers = [];
+let lamps = [];     // light sources the shared point-light pool can attach to
 function own(m) { m.userData.own = true; return m; }
+function ownPart(geo, mat, x, y, z, parent) { return own(part(geo, mat, x, y, z, parent)); }
 function placeOnTrack(m, s, d, y) { worldAt(s, d, W); m.position.set(W.x, y, W.z); m.rotation.y = W.th; return m; }
+function addLamp(c, s, d, y, color, power) { worldAt(s, d, W); const l = { c, s, x: W.x, y, z: W.z, color, power, on: true }; lamps.push(l); return l; }
+// [a, b] sub-ranges of [s0, s1] (on the STEP grid) where pred(s) holds
+function rangesWhere(s0, s1, pred) {
+  const out = []; let a = null;
+  for (let s = s0; s <= s1 + 1e-6; s += STEP) {
+    if (pred(s)) { if (a === null) a = s; }
+    else if (a !== null) { if (s - STEP > a) out.push([a, s - STEP]); a = null; }
+  }
+  if (a !== null && s1 > a) out.push([a, s1]);
+  return out;
+}
+const tunnelFree = (a, b) => { for (let s = a; s < b; s += 4) if (inTunnel(s)) return false; return !inTunnel(b); };
+
+function buildTunnel(g, c, a, b) {
+  const w = s => walkAt(s) + 0.05;
+  for (const side of [-1, 1]) g.add(own(new THREE.Mesh(ribbon(a, b, s => side * w(s), CURB_Y, s => side * w(s), TUN_H, 4.5), tunWallMat)));
+  g.add(own(new THREE.Mesh(ribbon(a, b, s => -w(s), TUN_H, s => w(s), TUN_H, 8), tunRoofMat)));
+  g.add(own(new THREE.Mesh(ribbon(a, b, s => -w(s) - 16, TUN_H + 3.5, s => w(s) + 16, TUN_H + 3.5, 8), hillMat)));
+  for (let s = Math.ceil(a / 6) * 6; s < b; s += 6) {
+    const h = halfAt(s);
+    for (const side of [-1, 1]) g.add(placeOnTrack(new THREE.Mesh(bx(0.35, 0.08, 2.6), tunLightMat), s, side * h * 0.42, TUN_H - 0.05));
+    if (s % 18 === 0) addLamp(c, s, 0, TUN_H - 1.0, 0xffe2b0, 1.5);
+  }
+}
+function buildPortal(g, s, entering) {
+  // concrete face around the opening, with an earth / building mass behind it
+  const w = Math.max(walkAt(s - 3), walkAt(s + 3)) + 0.05, outer = w + 16, z = entering ? -0.9 : 0.9;
+  const grp = placeOnTrack(new THREE.Group(), s, 0, 0);
+  ownPart(new THREE.BoxGeometry(outer * 2, 3.6, 1.8), concreteMat, 0, TUN_H + 1.8, z, grp);
+  ownPart(new THREE.BoxGeometry(outer * 2 + 0.4, 0.5, 2.2), concreteDark, 0, TUN_H + 3.7, z, grp);
+  for (const side of [-1, 1]) ownPart(new THREE.BoxGeometry(outer - w, TUN_H + 3.6, 1.8), concreteMat, side * (w + (outer - w) / 2), (TUN_H + 3.6) / 2, z, grp);
+  ownPart(new THREE.BoxGeometry(w * 2, 0.35, 0.3), stripe, 0, TUN_H + 0.2, z * 2.1, grp);
+  g.add(grp);
+}
+function buildOverbridge(g, c, s) {
+  // a flyover crossing the road at right angles, with pillars beyond the sidewalks
+  const w = Math.max(walkAt(s - 6), walkAt(s + 6)), span = w * 2 + 36, deckY = 7.6;
+  const grp = placeOnTrack(new THREE.Group(), s, 0, 0);
+  ownPart(new THREE.BoxGeometry(span, 1.3, 10), concreteMat, 0, deckY, 0, grp);
+  ownPart(new THREE.BoxGeometry(span, 0.5, 10.6), concreteDark, 0, deckY - 0.8, 0, grp);
+  for (const z of [-5.1, 5.1]) {
+    ownPart(new THREE.BoxGeometry(span, 0.9, 0.25), railMat, 0, deckY + 1.1, z, grp);
+    ownPart(new THREE.BoxGeometry(span, 0.12, 0.3), stripe, 0, deckY - 0.2, z * 1.04, grp);
+  }
+  for (const side of [-1, 1]) for (const z of [-3.2, 3.2]) part(bx(1.3, deckY - 0.6, 1.3), concreteDark, side * (w + 1.3), (deckY - 0.6) / 2, z, grp);
+  // lamps on the deck and under it
+  for (const x of [-w * 0.6, w * 0.6]) {
+    part(poleGeo, metalMat, x, deckY + 0.65 + 3.5, -4.6, grp);
+    part(bx(0.7, 0.16, 0.34), lampOn, x, deckY + 0.65 + 6.9, -4.6, grp);
+  }
+  for (const x of [-w * 0.45, 0, w * 0.45]) part(bx(1.6, 0.08, 0.3), tunLightMat, x, deckY - 1.1, 0, grp);
+  addLamp(c, s, 0, deckY - 1.6, 0xffe6c0, 1.6);
+  // a couple of parked cars up top so it reads as a road
+  for (const x of [rand(-w, -4), rand(4, w)]) {
+    const car2 = new THREE.Group();
+    part(bx(4.2, 0.6, 1.9), pick(trafficPaints), 0, 0.6, 0, car2);
+    part(bx(2.0, 0.5, 1.6), glass, 0.1, 1.1, 0, car2);
+    car2.position.set(x, deckY + 0.65, rand(-2.5, 2.5)); grp.add(car2);
+  }
+  g.add(grp);
+}
 
 function buildChunk(c) {
   const g = new THREE.Group();
   const s0 = c * CH, s1 = s0 + CH;
-  g.add(own(new THREE.Mesh(ribbon(s0, s1, -ROAD_HALF, 0, ROAD_HALF, 0, 12), roadMat)));
-  g.add(own(new THREE.Mesh(ribbon(s0, s1, -WALK_OUT, CURB_Y, -ROAD_HALF, CURB_Y, 4.5), walkMat)));
-  g.add(own(new THREE.Mesh(ribbon(s0, s1, ROAD_HALF, CURB_Y, WALK_OUT, CURB_Y, 4.5), walkMat)));
-  g.add(own(new THREE.Mesh(ribbon(s0, s1, -ROAD_HALF, 0, -ROAD_HALF, CURB_Y, 4), curbMat)));
-  g.add(own(new THREE.Mesh(ribbon(s0, s1, ROAD_HALF, 0, ROAD_HALF, CURB_Y, 4), curbMat)));
+  const nh = s => -halfAt(s), ph = s => halfAt(s);
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, nh, 0, ph, 0, 12, 12), roadMat)));
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, s => -walkAt(s), CURB_Y, nh, CURB_Y, 4.5, 4.5), walkMat)));
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, ph, CURB_Y, s => walkAt(s), CURB_Y, 4.5, 4.5), walkMat)));
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, nh, 0, nh, CURB_Y, 4), curbMat)));
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, ph, 0, ph, CURB_Y, 4), curbMat)));
+  // markings: solid edge lines, dashed lane lines (the outer ones only while those lanes are open)
+  const PY = 0.012;
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, s => -halfAt(s) + 0.35, PY, s => -halfAt(s) + 0.55, PY, 12), lineMat)));
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, s => halfAt(s) - 0.55, PY, s => halfAt(s) - 0.35, PY, 12), lineMat)));
+  g.add(own(new THREE.Mesh(ribbon(s0, s1, -0.1, PY, 0.1, PY, 12), laneDashMat)));
+  for (const [a, b] of rangesWhere(s0, s1, s => halfAt(s) - 0.55 > LANE + 1.6)) {
+    for (const d of [-LANE, LANE]) g.add(own(new THREE.Mesh(ribbon(a, b, d - 0.1, PY, d + 0.1, PY, 12), laneDashMat)));
+  }
+
+  // tunnels
+  for (const L of LAY) {
+    if (!L.tunnel || L.s1 <= s0 || L.s0 >= s1) continue;
+    buildTunnel(g, c, Math.max(s0, L.s0), Math.min(s1, L.s1));
+    if (L.s0 >= s0 && L.s0 < s1) buildPortal(g, L.s0, true);
+    if (L.s1 > s0 && L.s1 <= s1) buildPortal(g, L.s1, false);
+  }
+
+  // an overbridge now and then, on straight-ish open road
+  let bridgeS = -1e9;
+  if (s0 >= 400 && Math.random() < 0.11) {
+    const sb = s0 + 15;
+    pose(sb, P);
+    if (Math.abs(P.k) < 1 / 160 && tunnelFree(sb - 30, sb + 30)) { bridgeS = sb; buildOverbridge(g, c, sb); }
+  }
+
   for (const side of [-1, 1]) {
     let s = s0;
     while (s < s1 - 1) {
       const len = Math.min(rand(6, 14), s1 - s);
-      if (Math.random() < 0.1) { s += len; continue; }
+      if (Math.random() < 0.1 || !tunnelFree(s - 2, s + len + 2) || Math.abs(s + len / 2 - bridgeS) < 9 + len / 2) { s += len; continue; }
       const w = rand(8, 18), h = 5 + Math.random() * Math.random() * 40, dd = Math.max(1, len - 0.6);
+      const off = Math.max(walkAt(s), walkAt(s + len)) + 0.6;
       const geo = new THREE.BoxGeometry(w, h, dd); boxUV(geo, w, h, dd);
-      g.add(own(placeOnTrack(new THREE.Mesh(geo, pick(buildingMats)), s + len / 2, side * (10.6 + w / 2), h / 2)));
+      g.add(own(placeOnTrack(new THREE.Mesh(geo, pick(buildingMats)), s + len / 2, side * (off + w / 2), h / 2)));
       s += len;
     }
-    const ls = s0 + (side < 0 ? 8 : 23);
-    g.add(placeOnTrack(new THREE.Mesh(poleGeo, metalMat), ls, side * 8.9, 3.1));
-    g.add(placeOnTrack(new THREE.Mesh(bx(1.7, 0.09, 0.09), metalMat), ls, side * 8.1, 6.1));
-    const r = Math.random(), broken = r < 0.14, flicker = !broken && r < 0.26;
-    const head = placeOnTrack(new THREE.Mesh(bx(0.7, 0.16, 0.34), broken ? lampOff : (flicker ? lampOn.clone() : lampOn)), ls, side * 7.3, 6.0);
-    g.add(head);
-    if (!broken) {
-      const pool = placeOnTrack(new THREE.Mesh(poolGeo, flicker ? poolMat.clone() : poolMat), ls, side * 4.6, 0.03);
-      g.add(pool);
-      if (flicker) flickers.push({ head, pool, t: 0, c });
+    // street lamps: one per side per chunk, staggered, arm reaching over the outer lane
+    const ls = s0 + (side < 0 ? 4 : 19);
+    if (tunnelFree(ls - 3, ls + 3) && Math.abs(ls - bridgeS) >= 8) {
+      const h = halfAt(ls), poleD = h + WALL_OFF + 0.3, headD = h - 1.0, armL = poleD - headD;
+      g.add(placeOnTrack(new THREE.Mesh(poleGeo, metalMat), ls, side * poleD, 3.5));
+      g.add(own(placeOnTrack(new THREE.Mesh(new THREE.BoxGeometry(armL, 0.1, 0.1), metalMat), ls, side * (poleD - armL / 2), 6.95)));
+      const r = Math.random(), broken = r < 0.08, flicker = !broken && r < 0.16;
+      const head = placeOnTrack(new THREE.Mesh(bx(0.9, 0.18, 0.42), broken ? lampOff : (flicker ? lampOn.clone() : lampOn)), ls, side * headD, 6.85);
+      g.add(head);
+      if (!broken) {
+        const halo = new THREE.Sprite(flicker ? haloMat.clone() : haloMat);
+        worldAt(ls, side * headD, W); halo.position.set(W.x, 6.7, W.z); halo.scale.set(2.6, 2.6, 1);
+        g.add(halo);
+        const pool = placeOnTrack(new THREE.Mesh(poolGeo, flicker ? poolMat.clone() : poolMat), ls, side * (headD - 0.5), 0.03);
+        g.add(pool);
+        const lamp = addLamp(c, ls, side * headD, 6.4, 0xffb35a, 1.0);
+        if (flicker) flickers.push({ head, pool, halo, lamp, t: 0, c });
+      }
     }
   }
   if (s0 >= 330) {
-    if (Math.random() < 0.34) {
+    if (Math.random() < 0.3) {
       const sb = s0 + rand(6, 24);
       pose(sb, P);
-      if (Math.abs(P.k) < 1 / 140) {
-        g.add(placeOnTrack(new THREE.Mesh(bumpGeo, bumpMat), sb, 0, 0));
-        g.add(placeOnTrack(new THREE.Mesh(signPost, metalMat), sb - 20, 7.0, 1.2));
-        const sign = placeOnTrack(new THREE.Mesh(bx(0.85, 0.85, 0.05), signMat), sb - 20, 7.0, 2.5);
+      if (Math.abs(P.k) < 1 / 140 && tunnelFree(sb - 25, sb + 5) && !inTaper(sb) && Math.abs(sb - bridgeS) > 14) {
+        const bump = placeOnTrack(new THREE.Mesh(bumpGeo, bumpMat), sb, 0, 0);
+        bump.scale.x = halfAt(sb) * 2; g.add(bump);
+        const sd = halfAt(sb - 20) + 1.0;
+        g.add(placeOnTrack(new THREE.Mesh(signPost, metalMat), sb - 20, sd, 1.2 + CURB_Y));
+        const sign = placeOnTrack(new THREE.Mesh(bx(0.85, 0.85, 0.05), signMat), sb - 20, sd, 2.5 + CURB_Y);
         sign.rotation.z = Math.PI / 4; sign.rotation.order = 'YXZ';
         g.add(sign);
         feats.push({ type: 'bump', s: sb });
       }
     }
-    const holes = Math.random() < 0.5 ? (Math.random() < 0.3 ? 2 : 1) : 0;
-    for (let i = 0; i < holes; i++) {
-      const s = s0 + rand(2, 28), d = pick([-1, 0, 1]) * LANE + rand(-1, 1), rr = rand(0.7, 1.15);
-      g.add(own(placeOnTrack(new THREE.Mesh(holeGeo(rr * 1.3), holeRimMat), s, d, 0.012)));
-      g.add(own(placeOnTrack(new THREE.Mesh(holeGeo(rr), holeMat), s, d, 0.02)));
+    // potholes: rarer than before, and only one at a time
+    if (Math.random() < 0.16) {
+      const s = s0 + rand(2, 28), lanes = openLanes(s - 3, s + 3);
+      const d = laneD(pick(lanes)) + rand(-1.2, 1.2), rr = rand(0.7, 1.05);
+      g.add(own(placeOnTrack(new THREE.Mesh(holeGeo(rr * 1.3), holeRimMat), s, d, 0.016)));
+      g.add(own(placeOnTrack(new THREE.Mesh(holeGeo(rr), holeMat), s, d, 0.024)));
       feats.push({ type: 'hole', s, d, r: rr, hit: false });
     }
   }
@@ -569,6 +892,7 @@ function disposeChunk(c, g) {
   g.traverse(m => { if (m.userData.own) m.geometry.dispose(); });
   scene.remove(g);
   flickers = flickers.filter(f => f.c !== c);
+  lamps = lamps.filter(l => l.c !== c);
 }
 function updateChunks(sNow) {
   const c0 = Math.max(0, Math.floor((sNow - 45) / CH)), c1 = Math.floor((sNow + 300) / CH);
@@ -577,7 +901,25 @@ function updateChunks(sNow) {
   if (feats.length && feats[0].s < c0 * CH) feats = feats.filter(f => f.s >= c0 * CH);
   pruneTrack(c0 * CH - 20);
 }
-function clearChunks() { for (const [c, g] of chunks) disposeChunk(c, g); chunks.clear(); feats = []; flickers = []; }
+function clearChunks() { for (const [c, g] of chunks) disposeChunk(c, g); chunks.clear(); feats = []; flickers = []; lamps = []; }
+
+/* shared pool of real point lights, moved each frame onto the nearest lamps ahead.
+   The count never changes, so shaders never recompile. */
+const NLIGHTS = isTouch ? 6 : 10;
+const lightPool = [];
+for (let i = 0; i < NLIGHTS; i++) { const L = new THREE.PointLight(0xffb35a, 0, 30, 1.6); scene.add(L); lightPool.push(L); }
+function updateLightPool() {
+  const ref = S.s + 28;
+  const cand = lamps.filter(l => l.on && l.s > S.s - 25 && l.s < S.s + 170).sort((a, b) => Math.abs(a.s - ref) - Math.abs(b.s - ref));
+  for (let i = 0; i < NLIGHTS; i++) {
+    const L = lightPool[i], l = cand[i];
+    if (!l) { L.intensity = 0; continue; }
+    L.position.set(l.x, l.y, l.z); L.color.setHex(l.color);
+    // fade lights in at the far end so the pool handing over isn't visible
+    const fade = clamp((S.s + 170 - l.s) / 40, 0, 1);
+    L.intensity = 1.9 * l.power * fade; L.distance = l.y > 7 ? 28 : 30;
+  }
+}
 
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(700, 700), new THREE.MeshLambertMaterial({ color: 0x111614 }));
 ground.rotation.x = -Math.PI / 2; ground.position.y = -0.02; scene.add(ground);
@@ -602,8 +944,17 @@ part(bx(0.06, 0.05, 4.32), stripe, -0.35, 0.9, 0, body);
 part(bx(2.2, 0.12, 0.14), chrome, 0, 0.78, -2.3, body);
 part(bx(2.2, 0.12, 0.14), chrome, 0, 0.42, -2.36, body);
 for (const x of [-0.9, -0.3, 0.3, 0.9]) part(bx(0.1, 0.5, 0.1), chrome, x, 0.6, -2.33, body);
-part(bx(0.42, 0.16, 0.05), headMat, 0.66, 0.7, -2.17, body);
-part(bx(0.42, 0.16, 0.05), headMat, -0.66, 0.7, -2.17, body);
+part(bx(0.5, 0.2, 0.06), headMat, 0.66, 0.7, -2.17, body);
+part(bx(0.5, 0.2, 0.06), headMat, -0.66, 0.7, -2.17, body);
+// headlight glare + soft visible beams (additive, no depth write)
+const glareMat = new THREE.SpriteMaterial({ map: haloTex, color: 0xfff2d6, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
+const beamMat = new THREE.MeshBasicMaterial({ map: beamTex, color: 0xfff0cc, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+const beamGeo = new THREE.ConeGeometry(3.2, 24, 20, 1, true); beamGeo.rotateX(Math.PI / 2); beamGeo.translate(0, 0, -12);
+const beams = [];
+for (const x of [0.66, -0.66]) {
+  const gl = new THREE.Sprite(glareMat); gl.position.set(x, 0.7, -2.25); gl.scale.set(1.5, 1.0, 1); body.add(gl);
+  const b = part(beamGeo, beamMat, x, 0.7, -2.2, body); b.rotation.x = -0.07; b.renderOrder = 2; beams.push(b);
+}
 const tailMat = new THREE.MeshBasicMaterial({ color: 0xff2a2a });
 part(bx(0.5, 0.14, 0.05), tailMat, 0.66, 0.7, 2.17, body);
 part(bx(0.5, 0.14, 0.05), tailMat, -0.66, 0.7, 2.17, body);
@@ -616,12 +967,13 @@ for (const [x, z, front] of [[1.02, -1.4, 1], [-1.02, -1.4, 1], [1.02, 1.4, 0], 
   part(bx(0.36, 0.3, 0.08), chrome, x > 0 ? 0.02 : -0.02, 0, 0, w);
   wheels.push(w); if (front) frontPivots.push(pivot);
 }
-const flameGeo = new THREE.ConeGeometry(0.17, 1.0, 8); flameGeo.rotateX(Math.PI / 2); flameGeo.translate(0, 0, 0.5);
-const flameMat = new THREE.MeshBasicMaterial({ color: 0x5fd0ff, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
-const flamesN = [part(flameGeo, flameMat, 0.5, 0.42, 2.2, body), part(flameGeo, flameMat, -0.5, 0.42, 2.2, body)];
-const spot = new THREE.SpotLight(0xfff0cc, 2.6, 85, 0.55, 0.55, 1);
-spot.position.set(0, 1.1, -2.0); car.add(spot);
-spot.target.position.set(0, 0, -22); car.add(spot.target);
+const spot = new THREE.SpotLight(0xfff4dc, 6.5, 140, 0.62, 0.4, 1);
+spot.position.set(0, 1.0, -2.2); car.add(spot);
+spot.target.position.set(0, 0, -30); car.add(spot.target);
+// a short, wide fill light so the road right in front of the bumper is lit too
+const nearSpot = new THREE.SpotLight(0xfff4dc, 2.2, 30, 1.0, 0.6, 1);
+nearSpot.position.set(0, 1.2, -1.8); car.add(nearSpot);
+nearSpot.target.position.set(0, 0, -9); car.add(nearSpot.target);
 const tailGlow = new THREE.PointLight(0xff2020, 0.6, 7); tailGlow.position.set(0, 0.8, 3); car.add(tailGlow);
 const shadowBlob = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 4.8), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.45, depthWrite: false }));
 shadowBlob.rotation.x = -Math.PI / 2; scene.add(shadowBlob);
@@ -689,22 +1041,22 @@ function makeTrafficCar(kind) {
   return { g, hl, hw, bl, br };
 }
 function laneFree(lane, sFrom, sTo, self) {
-  const ld = lane * LANE;
+  const ld = laneD(lane);
   for (const o of traffic) {
-    if (o === self) continue;
-    if ((Math.abs(o.d - ld) < 2.8 || o.tLane === lane) && o.s + o.hl > sFrom && o.s - o.hl < sTo) return false;
+    if (o === self || o.dead) continue;
+    if ((Math.abs(o.d - ld) < 3.4 || o.tLane === lane) && o.s + o.hl > sFrom && o.s - o.hl < sTo) return false;
   }
-  if (Math.abs(S.d - ld) < 2.9 && S.s + 2.2 > sFrom && S.s - 2.2 < sTo) return false;
+  if (Math.abs(S.d - ld) < 3.5 && S.s + 2.2 > sFrom && S.s - 2.2 < sTo) return false;
   return true;
 }
 function spawnTraffic(sPos, cruise) {
-  const lanes = [-1, 0, 1].sort(() => Math.random() - 0.5);
+  const lanes = openLanes(sPos - 10, sPos + 70).sort(() => Math.random() - 0.5);
   for (const lane of lanes) {
     if (!laneFree(lane, sPos - 14, sPos + 14, null)) continue;
     const r = Math.random();
     const kind = r < 0.45 ? 'sedan' : r < 0.6 ? 'taxi' : r < 0.8 ? 'van' : 'truck';
     const m = makeTrafficCar(kind);
-    const t = Object.assign(m, { kind, s: sPos, d: lane * LANE, lane, tLane: lane, speed: cruise, cruise: kind === 'truck' ? Math.min(cruise, 30) : cruise, yaw: 0, cd: 0, lcCD: 2, changeT: rand(5, 12), ahead: sPos > S.s, y: 0 });
+    const t = Object.assign(m, { kind, s: sPos, d: laneD(lane), lane, tLane: lane, speed: cruise, cruise: kind === 'truck' ? Math.min(cruise, 30) : cruise, yaw: 0, cd: 0, lcCD: 2, changeT: rand(5, 12), ahead: sPos > S.s, y: 0 });
     traffic.push(t);
     placeTraffic(t);
     return t;
@@ -741,21 +1093,18 @@ function makeZombie(s, d, brute) {
   const armL = part(G.arm, skin, -0.4, 1.56, 0, g), armR = part(G.arm, skin, 0.4, 1.56, 0, g);
   if (brute) g.scale.setScalar(1.55);
   g.userData = { type: 'zombie', s, d, r: brute ? 0.7 : 0.42, brute, alive: true, legL, legR, armL, armR, phase: Math.random() * 6, walk: brute ? rand(0.7, 1.1) : rand(0.8, 1.8), vel: new THREE.Vector3(), spin: new THREE.Vector3(), cd: 0, deadT: 0 };
-  worldAt(s, d, W); g.position.set(W.x, Math.abs(d) > ROAD_HALF ? CURB_Y : 0, W.z);
+  worldAt(s, d, W); g.position.set(W.x, Math.abs(d) > halfAt(s) ? CURB_Y : 0, W.z);
   scene.add(g); ents.push(g);
 }
 const ringGeo = new THREE.RingGeometry(0.9, 1.15, 28); ringGeo.rotateX(-Math.PI / 2);
 const pickMats = {
   repair: [new THREE.MeshBasicMaterial({ color: 0xffb340 }), new THREE.MeshBasicMaterial({ color: 0xffb340, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false })],
-  nitro: [new THREE.MeshBasicMaterial({ color: 0x56cfff }), new THREE.MeshBasicMaterial({ color: 0x56cfff, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false })],
 };
-const canGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.9, 12), capGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.25, 8);
 function makePickup(kind, s, d) {
   const g = new THREE.Group();
   const [mat, ringMat] = pickMats[kind];
   const core = new THREE.Group(); core.position.y = 1.1; g.add(core);
-  if (kind === 'repair') { part(bx(0.9, 0.3, 0.3), mat, 0, 0, 0, core); part(bx(0.3, 0.9, 0.3), mat, 0, 0, 0, core); }
-  else { part(canGeo, mat, 0, 0, 0, core); part(capGeo, mat, 0, 0.55, 0, core); }
+  part(bx(0.9, 0.3, 0.3), mat, 0, 0, 0, core); part(bx(0.3, 0.9, 0.3), mat, 0, 0, 0, core);
   part(ringGeo, ringMat, 0, 0.05, 0, g);
   worldAt(s, d, W); g.position.set(W.x, 0, W.z);
   g.userData = { type: 'pickup', kind, s, d, r: 1.1, core };
@@ -771,7 +1120,6 @@ const PM = {
   ichor: new THREE.MeshBasicMaterial({ color: 0x55742c }),
   spark: new THREE.MeshBasicMaterial({ color: 0xffc25a }),
   smoke: new THREE.MeshLambertMaterial({ color: 0x3c3f3f, transparent: true, opacity: 0.55, depthWrite: false }),
-  nitro: new THREE.MeshBasicMaterial({ color: 0x56cfff }),
   dust: new THREE.MeshLambertMaterial({ color: 0x55534c, transparent: true, opacity: 0.5, depthWrite: false }),
 };
 const tmp = new THREE.Vector3();
@@ -839,9 +1187,9 @@ function chime(hi = 1) {
 /* ---------- state ---------- */
 function loadBest() { try { return parseInt(localStorage.getItem('deadmile.best') || '0', 10) || 0; } catch (e) { return 0; } }
 function saveBest(v) { try { localStorage.setItem('deadmile.best', String(v)); } catch (e) {} }
-const S = { state: 'menu', s: 60, d: LANE, rel: 0, y: 0, vy: 0, airT: 0, steerS: 0, speed: 0, health: 100, nitro: 60, score: 0, dist: 0, kills: 0, passes: 0, combo: 1, comboT: 0, shake: 0, wallCD: 0, dyingT: 0, maxS: 60, best: loadBest(), muted: false, gear: 2, shiftT: 0, rpm: 0.12, jumpCD: 0, auto: isTouch };
+const S = { state: 'menu', s: 60, d: laneD(2), rel: 0, y: 0, vy: 0, airT: 0, steerS: 0, speed: 0, health: 100, fire: 0, fireT: 0, score: 0, dist: 0, kills: 0, passes: 0, combo: 1, comboT: 0, shake: 0, wallCD: 0, dyingT: 0, maxS: 60, best: loadBest(), muted: false, gear: 2, shiftT: 0, rpm: 0.12, jumpCD: 0, auto: isTouch };
 let nextZombieS = 120, behindT = 6;
-const keys = { up: false, down: false, left: false, right: false, nitro: false };
+const keys = { gearUp: false, gearDown: false, left: false, right: false };
 const camPos = new THREE.Vector3(0, 4, 10);
 let camH = 0;
 const VIEWS = [
@@ -878,7 +1226,7 @@ function reset() {
   for (let i = traffic.length - 1; i >= 0; i--) removeTraffic(i);
   for (const p of parts) scene.remove(p.m); parts.length = 0;
   clearChunks(); resetTrack();
-  Object.assign(S, { s: 60, d: LANE, rel: 0, y: 0, vy: 0, airT: 0, steerS: 0, speed: 0, health: 100, nitro: 60, score: 0, dist: 0, kills: 0, passes: 0, combo: 1, comboT: 0, shake: 0, wallCD: 0, dyingT: 0, maxS: 60, gear: 2, shiftT: 0, rpm: 0.12, jumpCD: 0 });
+  Object.assign(S, { s: 60, d: laneD(2), rel: 0, y: 0, vy: 0, airT: 0, steerS: 0, speed: 0, health: 100, fire: 0, fireT: 0, score: 0, dist: 0, kills: 0, passes: 0, combo: 1, comboT: 0, shake: 0, wallCD: 0, dyingT: 0, maxS: 60, gear: 2, shiftT: 0, rpm: 0.12, jumpCD: 0 });
   nextZombieS = 130; behindT = rand(4, 8);
   updateChunks(S.s);
   for (let s = S.s + 40; s < S.s + 260; s += rand(30, 55)) spawnTraffic(s, rand(18, 40));
@@ -891,16 +1239,17 @@ function spawnZombies(s) {
   const n = r < 0.55 ? 1 : r < 0.88 ? 2 : 3 + (d > 2 ? 1 : 0);
   const onRoad = Math.random() < 0.35;
   const side = Math.random() < 0.5 ? -1 : 1;
-  const cd = onRoad ? rand(-5, 5) : side * rand(6.8, 9.0);
+  const h = halfAt(s), wl = wallAt(s) - 0.15;
+  const cd = onRoad ? rand(-(h - 1.5), h - 1.5) : side * rand(h + 0.8, wl);
   for (let i = 0; i < n; i++) {
     const brute = Math.random() < Math.min(0.15, 0.02 + d * 0.03);
-    makeZombie(s + rand(-4, 4), clamp(cd + rand(-1.5, 1.5), -9.2, 9.2), brute);
+    makeZombie(s + rand(-4, 4), clamp(cd + rand(-1.5, 1.5), -wl, wl), brute);
   }
-  if (Math.random() < 0.18) makePickup((S.health < 70 && Math.random() < 0.6) ? 'repair' : 'nitro', s + rand(10, 20), pick([-1, 0, 1]) * LANE);
+  if (Math.random() < (S.health < 70 ? 0.16 : 0.06)) { const ps = s + rand(10, 20); makePickup('repair', ps, laneD(pick(openLanes(ps - 3, ps + 3)))); }
 }
 
 /* ---------- HUD ---------- */
-const el = { gear: $('gear'), rpmBar: $('rpmBar'), tach: $('tach'), rpmTxt: $('rpmTxt'), gbMode: $('gbMode'), score: $('score'), dist: $('dist'), kills: $('kills'), combo: $('combo'), hp: $('hp'), hpbar: $('hpbar'), nos: $('nos'), spd: $('spd'), toast: $('toast'), flash: $('flash') };
+const el = { gear: $('gear'), rpmBar: $('rpmBar'), tach: $('tach'), rpmTxt: $('rpmTxt'), gbMode: $('gbMode'), score: $('score'), dist: $('dist'), kills: $('kills'), combo: $('combo'), hp: $('hp'), hpbar: $('hpbar'), fire: $('fire'), firebar: $('firebar'), fireLabel: $('fireLabel'), laneInfo: $('laneInfo'), spd: $('spd'), toast: $('toast'), flash: $('flash') };
 let toastLock = 0;
 function toast(text, cls, prio = 0) {
   if (prio < toastLock) return;
@@ -911,7 +1260,7 @@ function toast(text, cls, prio = 0) {
   el.toast.className = 'toast show ' + (cls || '');
 }
 function hurt(amount) {
-  if (S.state !== 'play') return;
+  if (S.state !== 'play' || S.fireT > 0) return;
   S.health = Math.max(0, S.health - amount);
   S.shake = Math.min(1, S.shake + amount / 25);
   el.flash.style.opacity = '1';
@@ -919,8 +1268,13 @@ function hurt(amount) {
   if (S.health <= 0) { S.state = 'dying'; S.dyingT = 1.8; toast('TOTALED', 'hurt', 9); thud(0.9, 200, 0.6); }
 }
 let hudLast = '';
+function laneTxt() {
+  const w = w4At(S.s), seg = segAt(S.s);
+  const base = w > 0.98 ? '4 LANES' : w < 0.02 ? '2 LANES' : (seg.lanes === 2 ? 'LANES MERGE' : 'ROAD WIDENS');
+  return seg.tunnel ? base + ' · TUNNEL' : base;
+}
 function updateHUD() {
-  const key = [S.score | 0, S.kills, S.combo, S.health | 0, S.nitro | 0, Math.abs(S.speed * 3.6) | 0, (S.dist / 10) | 0, S.gear, (S.rpm * 60) | 0, S.auto].join();
+  const key = [S.score | 0, S.kills, S.combo, S.health | 0, S.fire | 0, (S.fireT * 10) | 0, touchMode, cfg.touch, laneTxt(), Math.abs(S.speed * 3.6) | 0, (S.dist / 10) | 0, S.gear, (S.rpm * 60) | 0, S.auto].join();
   if (key === hudLast) return; hudLast = key;
   el.gear.textContent = GEARS[S.gear].n;
   el.gear.classList.toggle('shift', !S.auto && S.gear >= 2 && S.gear < GEARS.length - 1 && S.rpm > 0.9);
@@ -928,7 +1282,17 @@ function updateHUD() {
   el.rpmBar.style.width = Math.min(100, S.rpm * 100) + '%';
   el.tach.classList.toggle('hot', S.rpm > 0.9);
   el.rpmTxt.textContent = Math.round((800 + S.rpm * 6400) / 100) * 100;
-  el.gbMode.textContent = S.auto ? (touchMode ? 'AUTOMATIC · SLIDE ▼ TO BRAKE' : 'AUTOMATIC · HOLD S TO BRAKE') : (touchMode ? 'MANUAL · SLIDE ▲ ▼ TO SHIFT' : 'MANUAL · W ▲ · S ▼');
+  const useLever = touchMode && cfg.touch === 'wheel';
+  el.gbMode.textContent = touchMode
+    ? (S.auto ? (useLever ? 'AUTOMATIC · PULL LEVER ▼ TO BRAKE' : 'AUTOMATIC · SWIPE ▼ + HOLD TO BRAKE') : (useLever ? 'MANUAL · LEVER ▲ ▼ TO SHIFT' : 'MANUAL · SWIPE ▲ ▼ TO SHIFT'))
+    : (S.auto ? 'AUTOMATIC · HOLD ' + keyName(cfg.keys.gearDown) + ' TO BRAKE' : 'MANUAL · ' + keyName(cfg.keys.gearUp) + ' ▲ · ' + keyName(cfg.keys.gearDown) + ' ▼');
+  const fireV = S.fireT > 0 ? S.fireT / FIRE_TIME * 100 : S.fire, ready = S.fire >= 100 && S.fireT <= 0;
+  el.fire.style.width = fireV + '%';
+  el.firebar.classList.toggle('ready', ready);
+  el.fireLabel.textContent = S.fireT > 0 ? 'Hellfire · burning · ' + Math.ceil(S.fireT) + 's' : ready ? 'Hellfire · ready · ' + (touchMode ? 'FIRE' : keyName(cfg.keys.special)) : 'Hellfire · ' + (S.fire | 0) + '%';
+  specialBtn.style.setProperty('--fill', fireV.toFixed(0));
+  specialBtn.classList.toggle('ready', ready); specialBtn.classList.toggle('active', S.fireT > 0);
+  specialBtn.textContent = S.fireT > 0 ? Math.ceil(S.fireT) + 's' : 'FIRE';
   el.score.textContent = (S.score | 0).toLocaleString();
   el.dist.textContent = (S.dist / 1000).toFixed(2) + ' km out';
   el.kills.textContent = S.kills;
@@ -936,14 +1300,70 @@ function updateHUD() {
   el.combo.classList.toggle('on', S.combo > 1);
   el.hp.style.width = S.health + '%';
   el.hpbar.classList.toggle('low', S.health < 30);
-  el.nos.style.width = S.nitro + '%';
+  el.laneInfo.textContent = laneTxt();
   el.spd.textContent = Math.abs(S.speed * 3.6) | 0;
 }
+
+/* ---------- settings (saved in the browser) ---------- */
+const ACTIONS = [
+  ['gearUp', 'Gear up'], ['gearDown', 'Gear down'], ['left', 'Steer left'], ['right', 'Steer right'],
+  ['jump', 'Jump'], ['special', 'Special: Hellfire'], ['camera', 'Camera angle'],
+];
+const KEY_DEFAULT = { gearUp: 'ArrowUp', gearDown: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight', jump: 'Space', special: 'ControlLeft', camera: 'KeyC' };
+const GP_DEFAULT = { gearUp: 0, gearDown: 1, left: 14, right: 15, jump: 2, special: 3, camera: 4 };
+const GP_PAUSE = 9;   // Start: fixed
+const GP_STICK = 10;  // the left stick (L3) always steers
+const GP_NAMES = {
+  xbox: ['A', 'B', 'X', 'Y', 'L1', 'R1', 'L2', 'R2', 'Select', 'Start', 'L3', 'R3', 'D-pad ↑', 'D-pad ↓', 'D-pad ←', 'D-pad →', 'Home'],
+  ps: ['✕', '○', '□', '△', 'L1', 'R1', 'L2', 'R2', 'Share', 'Options', 'L3', 'R3', 'D-pad ↑', 'D-pad ↓', 'D-pad ←', 'D-pad →', 'PS'],
+};
+// where each standard-mapping button sits on the gamepad drawing (viewBox 400 x 260)
+const GP_POS = { 0: [292, 108], 1: [316, 84], 2: [268, 84], 3: [292, 60], 4: [111, 30], 5: [289, 30], 6: [115, 12], 7: [285, 12], 8: [172, 84], 9: [228, 84], 10: [108, 84], 11: [250, 128], 12: [150, 109], 13: [150, 147], 14: [131, 128], 15: [169, 128], 16: [200, 56] };
+let gpStyle = 'xbox';
+const gpName = i => (GP_NAMES[gpStyle][i] || 'Button ' + i);
+const KEY_NAMES = { ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→', Space: 'Space', ControlLeft: 'Ctrl', ControlRight: 'Right Ctrl', ShiftLeft: 'Shift', ShiftRight: 'Right Shift', AltLeft: 'Alt', AltRight: 'Alt Gr', MetaLeft: 'Meta', MetaRight: 'Meta', Enter: 'Enter', Backspace: 'Backspace', Tab: 'Tab', CapsLock: 'Caps Lock', Escape: 'Esc' };
+function keyName(code) {
+  if (!code) return '—';
+  if (KEY_NAMES[code]) return KEY_NAMES[code];
+  let m;
+  if ((m = /^Key([A-Z])$/.exec(code))) return m[1];
+  if ((m = /^Digit(\d)$/.exec(code))) return m[1];
+  if ((m = /^Numpad(.+)$/.exec(code))) return 'Num ' + m[1];
+  return code;
+}
+const CFG_OK = { trans: ['auto', 'manual'], sound: ['on', 'off'], orient: ['landscape', 'portrait'], touch: ['slide', 'wheel', 'gyro'], size: ['s', 'm', 'l'], sens: ['low', 'mid', 'high'] };
+const cfg = {
+  trans: isTouch ? 'auto' : 'manual', sound: 'on', orient: 'landscape',
+  touch: 'slide', size: 'm', sens: 'mid',
+  keys: Object.assign({}, KEY_DEFAULT), gp: Object.assign({}, GP_DEFAULT),
+};
+const CFG_KEY = 'deadmile.settings.v2';
+try {
+  const saved = JSON.parse(localStorage.getItem(CFG_KEY) || 'null');
+  const old = saved ? null : JSON.parse(localStorage.getItem('deadmile.settings') || 'null');
+  const src = saved || old;
+  if (src && typeof src === 'object') {
+    if (old && old.orient === 'any') src.orient = 'portrait';
+    for (const k in CFG_OK) if (CFG_OK[k].includes(src[k])) cfg[k] = src[k];
+    if (saved && saved.keys) for (const k in KEY_DEFAULT) if (typeof saved.keys[k] === 'string' && saved.keys[k] !== 'Escape') cfg.keys[k] = saved.keys[k];
+    if (saved && saved.gp) for (const k in GP_DEFAULT) if (Number.isInteger(saved.gp[k]) && saved.gp[k] !== GP_PAUSE) cfg.gp[k] = saved.gp[k];
+  }
+} catch (_) {}
+function saveCfg() { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (_) {} }
+const SIZE = { s: 0.85, m: 1, l: 1.18 };
+const SENS = { low: 0.6, mid: 0.82, high: 1 };            // touch slide: steering lock
+const WHEEL_LOCK = { low: 125, mid: 95, high: 65 };       // wheel: degrees for full lock
+const TILT_LOCK = { low: 0.62, mid: 0.44, high: 0.3 };    // gyro: radians of tilt for full lock
 
 /* ---------- screens ---------- */
 function show(id, on) { $(id).hidden = !on; }
 $('bestMenu').textContent = S.best.toLocaleString();
-let hintTimer = 0;
+let hintTimer = 0, settingsFromMenu = false;
+const TOUCH_HINT = {
+  slide: 'Hold left / right side to steer · swipe ▲ ▼ to shift · double tap to jump',
+  wheel: 'Turn the wheel to steer · push the lever to shift · FIRE once Hellfire is charged',
+  gyro: 'Tilt to steer · swipe ▲ ▼ to shift · double tap to jump',
+};
 function startGame() {
   initAudio();
   reset();
@@ -952,11 +1372,11 @@ function startGame() {
   show('menu', false); show('over', false); show('paused', false);
   show('hud', true); show('topbtns', true);
   $('pad').classList.add('live');
-  if (touchMode && orientPref === 'landscape') goLandscape();
+  if (touchMode) { goOrient(); if (cfg.touch === 'gyro') startGyro(true); }
   const hint = $('hint'); hint.hidden = false; hint.style.opacity = '1';
-  hint.textContent = touchMode ? 'Slide ◀ ▶ to steer · slide ▲ ▼ to shift · VIEW changes camera' : 'Drag to look around · scroll to zoom · C for inside-car view';
+  hint.textContent = touchMode ? TOUCH_HINT[cfg.touch] : 'Esc pause & settings · ' + keyName(cfg.keys.special) + ' for Hellfire once charged · right-drag to look around';
   clearTimeout(hintTimer); hintTimer = setTimeout(() => { hint.style.opacity = '0'; }, 5000);
-  toast(S.auto ? 'GO GO GO' : touchMode ? '1ST GEAR · SLIDE UP TO SHIFT' : '1ST GEAR · W TO SHIFT UP', 'kill', 1);
+  toast(S.auto ? 'GO GO GO' : touchMode ? (cfg.touch === 'wheel' ? '1ST GEAR · PUSH THE LEVER UP' : '1ST GEAR · SWIPE UP TO SHIFT') : '1ST GEAR · ' + keyName(cfg.keys.gearUp) + ' TO SHIFT UP', 'kill', 1);
 }
 function endGame() {
   S.state = 'over';
@@ -972,11 +1392,26 @@ function endGame() {
   $('pad').classList.remove('live');
   $('againBtn').focus();
 }
-function pause(on) {
-  if (on && S.state === 'play') { S.state = 'paused'; show('paused', true); }
-  else if (!on && S.state === 'paused') { S.state = 'play'; show('paused', false); last = performance.now(); }
+function setPauseMode(fromMenu) {
+  settingsFromMenu = fromMenu;
+  $('pauseKicker').textContent = fromMenu ? 'Garage' : 'Engine idling';
+  $('pauseTitle').textContent = fromMenu ? 'SETTINGS' : 'PAUSED';
+  $('resumeBtn').textContent = fromMenu ? 'DONE' : 'RESUME';
+  $('quitBtn').hidden = fromMenu;
 }
+function openSettings() {
+  show('paused', true);
+  selectTab(gpConnected ? 'gamepad' : touchMode ? 'mobile' : 'desktop');
+}
+function pause(on) {
+  if (on && S.state === 'play') { S.state = 'paused'; setPauseMode(false); openSettings(); }
+  else if (!on && S.state === 'paused') { cancelCapture(); S.state = 'play'; show('paused', false); last = performance.now(); }
+}
+function openMenuSettings() { setPauseMode(true); show('menu', false); openSettings(); }
+function closeMenuSettings() { cancelCapture(); show('paused', false); show('menu', true); $('startBtn').focus(); }
+const settingsOpen = () => !$('paused').hidden;
 function toMenu() {
+  cancelCapture();
   reset(); S.state = 'menu';
   show('paused', false); show('over', false); show('hud', false); show('topbtns', false); $('hint').hidden = true;
   $('pad').classList.remove('live');
@@ -986,151 +1421,571 @@ function toMenu() {
 function setView(i) {
   viewI = (i + VIEWS.length) % VIEWS.length;
   Object.assign(CAM, VIEWS[viewI]);
-  $('viewBtn').textContent = 'VIEW: ' + VIEWS[viewI].name;
+  $('viewName').textContent = VIEWS[viewI].name;
   camera.near = VIEWS[viewI].cockpit ? 0.05 : 0.1;
   camera.updateProjectionMatrix();
 }
-function toggleCockpit() {
-  if (VIEWS[viewI].cockpit) setView(lastOutside);
-  else { lastOutside = viewI; setView(VIEWS.findIndex(v => v.cockpit)); }
-}
-function setAuto(on) {
-  S.auto = on;
-  document.body.classList.toggle('manual', !on);
-  $('gearBtn').textContent = 'GEARS: ' + (on ? 'AUTO' : 'MANUAL');
-  hudLast = '';
-}
-setAuto(S.auto);
-$('gearBtn').addEventListener('click', e => { setAuto(!S.auto); e.currentTarget.blur(); });
 addEventListener('beforeunload', e => { if (S.state === 'play' || S.state === 'paused') { e.preventDefault(); e.returnValue = ''; } });
 $('startBtn').addEventListener('click', startGame);
 $('againBtn').addEventListener('click', startGame);
-$('resumeBtn').addEventListener('click', () => pause(false));
+$('menuSettingsBtn').addEventListener('click', openMenuSettings);
+$('resumeBtn').addEventListener('click', () => { if (settingsFromMenu) closeMenuSettings(); else pause(false); });
 $('quitBtn').addEventListener('click', toMenu);
-$('pauseBtn').addEventListener('click', () => pause(true));
+$('pauseBtn').addEventListener('click', e => { pause(true); e.currentTarget.blur(); });
 $('viewBtn').addEventListener('click', e => { setView(viewI + 1); e.currentTarget.blur(); });
-$('muteBtn').addEventListener('click', e => { S.muted = !S.muted; e.currentTarget.textContent = S.muted ? 'SOUND OFF' : 'SOUND ON'; e.currentTarget.blur(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(true); });
 
-/* ---------- landscape on phones ---------- */
+/* settings tabs: Desktop / Mobile / Gamepad */
+let curTab = 'desktop';
+function selectTab(name) {
+  curTab = name;
+  document.querySelectorAll('.tabs button').forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === name)));
+  document.querySelectorAll('.tabpane').forEach(p => { p.hidden = p.dataset.tab !== name; });
+  cancelCapture();
+  if (name === 'gamepad') requestAnimationFrame(drawGpLines);
+}
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => selectTab(b.dataset.tab)));
+
+/* ---------- screen orientation on phones ---------- */
 // Android Chrome can lock orientation, but only in fullscreen and only from a tap.
-// iOS Safari can't do either, so the #rotate screen asks the player to turn the phone.
-function goLandscape() {
+// iOS Safari can't do either, so in landscape mode the #rotate screen asks the player to turn the phone.
+function goOrient() {
+  const want = cfg.orient === 'portrait' ? 'portrait' : 'landscape';
   const de = document.documentElement;
   const req = de.requestFullscreen || de.webkitRequestFullscreen;
-  const lock = () => { try { const p = screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape'); if (p && p.catch) p.catch(() => {}); } catch (_) {} };
+  const lock = () => { try { const p = screen.orientation && screen.orientation.lock && screen.orientation.lock(want); if (p && p.catch) p.catch(() => {}); } catch (_) {} };
   if (req && !(document.fullscreenElement || document.webkitFullscreenElement)) {
     try { const p = req.call(de, { navigationUI: 'hide' }); if (p && p.then) p.then(lock, () => {}); else lock(); } catch (_) {}
   } else lock();
 }
-// Screen setting: 'landscape' (rotate screen in portrait) or 'any' (play either way).
-let orientPref = 'landscape';
-try { if (localStorage.getItem('deadmile.orient') === 'any') orientPref = 'any'; } catch (_) {}
-function setOrientPref(pref, fromTap) {
-  orientPref = pref;
-  try { localStorage.setItem('deadmile.orient', pref); } catch (_) {}
-  document.body.classList.toggle('any-orient', pref === 'any');
-  document.querySelectorAll('.orient-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.orient === pref)));
-  if (pref === 'any') { try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch (_) {} }
-  else if (fromTap && touchMode && S.state !== 'menu') goLandscape();
-  onOrient();
-}
 const portraitMQ = matchMedia('(orientation: portrait)');
-const onOrient = () => { if (orientPref === 'landscape' && portraitMQ.matches && touchMode && S.state === 'play') pause(true); };
-if (portraitMQ.addEventListener) portraitMQ.addEventListener('change', onOrient); else portraitMQ.addListener(onOrient);
-$('rotate').addEventListener('click', goLandscape);
-$('rotateAny').addEventListener('click', e => { e.stopPropagation(); setOrientPref('any', true); });
-document.querySelectorAll('.orient-seg button').forEach(b => b.addEventListener('click', () => setOrientPref(b.dataset.orient, true)));
-setOrientPref(orientPref, false);
-refreshInputUI = () => { hudLast = ''; onOrient(); };
+const onOrient = () => {
+  if (cfg.orient === 'landscape' && portraitMQ.matches && touchMode && S.state === 'play') pause(true);
+  if (settingsOpen() && curTab === 'gamepad') requestAnimationFrame(drawGpLines);
+};
+if (portraitMQ.addEventListener) portraitMQ.addEventListener('change', onOrient); else if (portraitMQ.addListener) portraitMQ.addListener(onOrient);
+addEventListener('resize', () => { if (settingsOpen() && curTab === 'gamepad') drawGpLines(); });
+$('rotate').addEventListener('click', goOrient);
+$('rotateAny').addEventListener('click', e => { e.stopPropagation(); setSetting('orient', 'portrait'); });
+
+/* ---------- applying settings ---------- */
+function setAuto(on) { setSetting('trans', on ? 'auto' : 'manual'); }
+function setSetting(key, val, fromTap = true) {
+  cfg[key] = val; saveCfg();
+  applySettings();
+  if (key === 'orient' && fromTap && touchMode && S.state !== 'menu') goOrient();
+  if (key === 'touch' && val === 'gyro' && fromTap) startGyro(true);   // asks iOS for motion access from this tap
+}
+function applySettings() {
+  S.auto = cfg.trans === 'auto';
+  S.muted = cfg.sound === 'off';
+  const b = document.body.classList;
+  b.toggle('manual', !S.auto);
+  b.toggle('any-orient', cfg.orient === 'portrait');
+  for (const m of CFG_OK.touch) b.toggle('tm-' + m, cfg.touch === m);
+  const pad = $('pad');
+  for (const m of CFG_OK.touch) pad.classList.toggle('m-' + m, cfg.touch === m);
+  document.documentElement.style.setProperty('--ts', SIZE[cfg.size] || 1);
+  document.querySelectorAll('.seg[data-set]').forEach(seg => {
+    seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(cfg[seg.dataset.set] === x.dataset.v)));
+  });
+  renderKbRows(); renderGp(); renderMock(); renderMenuKeys();
+  hudLast = '';
+}
+document.querySelectorAll('.seg[data-set] button').forEach(x => x.addEventListener('click', () => setSetting(x.closest('.seg').dataset.set, x.dataset.v)));
+refreshInputUI = () => { hudLast = ''; renderMenuKeys(); };
+
+/* ---------- remapping: keyboard and gamepad ---------- */
+let capKey = null, capGp = null;
+function cancelCapture() { if (capKey || capGp) { capKey = capGp = null; renderKbRows(); renderGp(); } }
+function mkEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function renderKbRows() {
+  const box = $('kbRows'); box.textContent = '';
+  for (const [act, label] of ACTIONS) {
+    const row = mkEl('div', 'maprow');
+    const k = mkEl('kbd', capKey === act ? 'wait' : '', capKey === act ? 'Press a key…' : keyName(cfg.keys[act]));
+    const btn = mkEl('button', 'ghost', capKey === act ? 'Cancel' : 'Change'); btn.type = 'button';
+    btn.addEventListener('click', () => { capGp = null; capKey = capKey === act ? null : act; renderKbRows(); });
+    row.append(mkEl('span', '', label), k, btn); box.append(row);
+  }
+  const row = mkEl('div', 'maprow');
+  row.append(mkEl('span', '', 'Pause / back'), mkEl('kbd', '', 'Esc'), mkEl('span', 'fixedtag', 'Fixed'));
+  box.append(row);
+}
+function assignKey(act, code) {
+  const other = Object.keys(cfg.keys).find(k => k !== act && cfg.keys[k] === code);
+  if (other) cfg.keys[other] = cfg.keys[act];      // swap so no two actions share a key
+  cfg.keys[act] = code; capKey = null;
+  saveCfg(); renderKbRows(); renderMenuKeys(); hudLast = '';
+}
+$('kbReset').addEventListener('click', () => { cfg.keys = Object.assign({}, KEY_DEFAULT); capKey = null; saveCfg(); renderKbRows(); renderMenuKeys(); });
+
+function assignGp(act, idx) {
+  const other = Object.keys(cfg.gp).find(k => k !== act && cfg.gp[k] === idx);
+  if (other) cfg.gp[other] = cfg.gp[act];
+  cfg.gp[act] = idx; capGp = null;
+  saveCfg(); renderGp(); renderMenuKeys();
+}
+$('gpReset').addEventListener('click', () => { cfg.gp = Object.assign({}, GP_DEFAULT); capGp = null; saveCfg(); renderGp(); renderMenuKeys(); });
+
+/* gamepad diagram: actions listed left and right of the drawing, joined to their buttons by thin lines */
+const gpSvg = $('gpSvg');
+const gpBtnEls = {};
+gpSvg.querySelectorAll('.btn[data-b]').forEach(e => { gpBtnEls[e.dataset.b] = e; });
+function renderGp() {
+  // face-button letters follow the connected pad's style
+  gpSvg.querySelectorAll('text[data-l]').forEach(t => { t.textContent = gpName(+t.dataset.l); });
+  const rows = ACTIONS.map(([act, label]) => ({ act, label, b: cfg.gp[act] })).concat([{ act: 'pause', label: 'Pause / back', b: GP_PAUSE, fixed: true }]);
+  const used = new Set(rows.map(r => r.b)); used.add(GP_STICK);
+  for (const i in gpBtnEls) {
+    const e = gpBtnEls[i];
+    e.classList.toggle('mapped', used.has(+i));
+    e.classList.toggle('wait', !!capGp && cfg.gp[capGp] === +i);
+  }
+  const L = $('gpColL'), R = $('gpColR'); L.textContent = R.textContent = '';
+  const posOf = b => GP_POS[b] || [200, 200];
+  rows.sort((a, b) => posOf(a.b)[1] - posOf(b.b)[1]);
+  for (const r of rows) {
+    const stick = r.act === 'left' || r.act === 'right';
+    const row = mkEl('div', 'gprow'); row.dataset.b = r.b; if (stick) row.dataset.b2 = GP_STICK;
+    row.append(mkEl('span', 'n', r.label));
+    const k = mkEl('kbd', capGp === r.act ? 'wait' : '', capGp === r.act ? 'Press…' : gpName(r.b) + (stick ? ' / L3 ' + (r.act === 'left' ? '←' : '→') : ''));
+    row.append(k);
+    if (r.fixed) row.append(mkEl('span', 'fixedtag', 'Fixed'));
+    else {
+      const btn = mkEl('button', 'ghost', capGp === r.act ? 'Cancel' : 'Change'); btn.type = 'button';
+      btn.addEventListener('click', () => { capKey = null; capGp = capGp === r.act ? null : r.act; renderGp(); });
+      row.append(btn);
+    }
+    const hl = on => { for (const b of stick ? [r.b, GP_STICK] : [r.b]) { const e = gpBtnEls[b]; if (e) e.classList.toggle('hl', on); } row.classList.toggle('hl', on); };
+    row.addEventListener('pointerenter', () => hl(true));
+    row.addEventListener('pointerleave', () => hl(false));
+    (posOf(r.b)[0] < 200 ? L : R).append(row);
+  }
+  if (settingsOpen() && curTab === 'gamepad') requestAnimationFrame(drawGpLines);
+}
+function drawGpLines() {
+  const svgL = $('gpLines'), wrap = $('gpWrap');
+  svgL.textContent = '';
+  if (!wrap.offsetParent) return;
+  const wr = wrap.getBoundingClientRect(), ir = gpSvg.getBoundingClientRect();
+  const k = ir.width / 400;
+  if (!k || getComputedStyle(svgL).display === 'none') return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const add = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); svgL.appendChild(e); };
+  wrap.querySelectorAll('.gprow').forEach(row => {
+    const rr = row.getBoundingClientRect();
+    const leftCol = rr.left < ir.left;
+    const ax = (leftCol ? rr.right : rr.left) - wr.left, ay = rr.top + rr.height / 2 - wr.top;
+    const kx = ax + (leftCol ? 12 : -12);
+    add('circle', { cx: ax, cy: ay, r: 2.5 });
+    for (const b of [row.dataset.b, row.dataset.b2]) {
+      const p = GP_POS[b]; if (!p) continue;
+      // stop at the button's edge so the line never covers its label
+      let bx = ir.left - wr.left + p[0] * k, by = ir.top - wr.top + p[1] * k;
+      const dx = kx - bx, dy = ay - by, len = Math.hypot(dx, dy) || 1, edge = (+b === GP_STICK ? 20 : 13) * k;
+      bx += dx / len * edge; by += dy / len * edge;
+      add('path', { d: `M${ax} ${ay}H${kx}L${bx} ${by}` });
+      add('circle', { cx: bx, cy: by, r: 2.5 });
+    }
+  });
+}
+
+/* phone mockups of each touch layout */
+const MOCK_DESC = {
+  slide: ['<b>Hold the left / right side</b> of the screen to steer', '<b>Swipe up / down</b> anywhere to shift gear (automatic: swipe down and hold to brake)', '<b>Double tap</b> anywhere to jump, or press <b>JUMP</b>', '<b>FIRE</b> sets off Hellfire once it is charged'],
+  wheel: ['<b>Turn the wheel</b> (bottom right) to steer. It springs back when you let go', '<b>Push the GEAR lever</b> up / pull it down to shift (automatic: pull down and hold to brake)', '<b>JUMP</b> and <b>FIRE</b> sit bottom left', 'No screen gestures in this mode, so stray taps do nothing'],
+  gyro: ['<b>Tilt the phone</b> like a steering wheel to steer. Touch steering is off', '<b>Swipe up / down</b> to shift gear (automatic: swipe down and hold to brake)', '<b>Double tap</b> or <b>JUMP</b> to jump · <b>FIRE</b> for Hellfire', 'Hold the phone the way you drive, then <b>Re-center tilt</b>. A run also re-centers when it starts'],
+};
+function phoneSVG(mode, land) {
+  const sw = land ? 480 : 220, sh = land ? 222 : 420, bz = 12, pad = mode === 'gyro' ? 40 : 4;
+  const W = sw + bz * 2, H = sh + bz * 2;
+  const bs = (land ? sh : sw) * 0.2;              // button size, like --btn
+  const o = [];
+  const T = (x, y, txt, size = 10, fill = '#e8ecdf', anchor = 'middle', w = 700) => o.push(`<text x="${x}" y="${y}" font-size="${size}" font-weight="${w}" fill="${fill}" text-anchor="${anchor}" dominant-baseline="central" font-family="Chakra Petch, sans-serif" letter-spacing=".06em">${txt}</text>`);
+  const C = (cx, cy, r, label, col = 'rgba(232,236,223,.35)', txtCol = '#e8ecdf', fill = 'rgba(9,14,13,.6)') => { o.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${col}" stroke-width="2"/>`); T(cx, cy, label, Math.max(8, r * 0.42), txtCol); };
+  // the street
+  const hy = sh * 0.36, vx = sw / 2;
+  o.push(`<rect width="${sw}" height="${sh}" fill="#0c1413"/>`);
+  const bh = [0.18, 0.3, 0.22, 0.4, 0.26, 0.34, 0.2];
+  for (let i = 0; i < 7; i++) {
+    const h = bh[i] * sh, w = sw * 0.075;
+    o.push(`<rect x="${i * w}" y="${hy + sh * 0.06 - h}" width="${w - 2}" height="${h}" fill="#1b211f"/>`);
+    o.push(`<rect x="${sw - (i + 1) * w + 2}" y="${hy + sh * 0.06 - h * 0.9}" width="${w - 2}" height="${h * 0.9}" fill="#1b211f"/>`);
+    if (i % 2) o.push(`<rect x="${i * w + 4}" y="${hy + sh * 0.06 - h + 6}" width="4" height="5" fill="#ffc56b" opacity=".7"/><rect x="${sw - (i + 1) * w + 8}" y="${hy + sh * 0.06 - h * 0.9 + 10}" width="4" height="5" fill="#a6d6ff" opacity=".6"/>`);
+  }
+  o.push(`<polygon points="${vx - sw * 0.03},${hy} ${vx + sw * 0.03},${hy} ${sw * 1.1},${sh} ${-sw * 0.1},${sh}" fill="#23272a"/>`);
+  for (const f of [-1, 1]) o.push(`<line x1="${vx + f * sw * 0.026}" y1="${hy}" x2="${vx + f * sw * 0.92}" y2="${sh}" stroke="#d8d4c4" stroke-width="2" opacity=".7"/>`);
+  for (const f of [-0.5, 0, 0.5]) o.push(`<line x1="${vx + f * sw * 0.026}" y1="${hy}" x2="${vx + f * sw * 0.92}" y2="${sh}" stroke="#d8d4c4" stroke-width="1.6" stroke-dasharray="10 12" opacity=".55"/>`);
+  for (const [f, y] of [[-1, 0.42], [1, 0.5], [-1, 0.62]]) { const x = vx + f * sw * (0.06 + (y - 0.36) * 1.3); o.push(`<circle cx="${x}" cy="${sh * y}" r="${sw * 0.04}" fill="#ffb35a" opacity=".12"/><circle cx="${x}" cy="${sh * y}" r="2.5" fill="#ffd08a"/>`); }
+  // zombies + the car (rear view) with its headlight beam
+  for (const [x, y] of [[0.44, 0.47], [0.58, 0.52]]) o.push(`<rect x="${sw * x}" y="${sh * y}" width="4" height="9" fill="#7d9a6a"/>`);
+  const cw = Math.min(sw, sh) * 0.22, cy = sh * (land ? 0.66 : 0.68);
+  o.push(`<polygon points="${vx - cw * 0.35},${cy} ${vx + cw * 0.35},${cy} ${vx + sw * 0.06},${hy + 6} ${vx - sw * 0.06},${hy + 6}" fill="#fff0cc" opacity=".08"/>`);
+  o.push(`<rect x="${vx - cw / 2}" y="${cy}" width="${cw}" height="${cw * 0.42}" rx="4" fill="#8e1b22"/><rect x="${vx - cw * 0.36}" y="${cy - cw * 0.2}" width="${cw * 0.72}" height="${cw * 0.24}" rx="3" fill="#0c171e"/><rect x="${vx - cw * 0.45}" y="${cy + cw * 0.12}" width="${cw * 0.18}" height="${cw * 0.08}" fill="#ff2a2a"/><rect x="${vx + cw * 0.27}" y="${cy + cw * 0.12}" width="${cw * 0.18}" height="${cw * 0.08}" fill="#ff2a2a"/>`);
+  // HUD
+  o.push(`<rect x="8" y="8" width="44" height="16" fill="rgba(9,14,13,.8)" stroke="rgba(232,236,223,.2)"/><rect x="${sw - 52}" y="8" width="44" height="16" fill="rgba(9,14,13,.8)" stroke="rgba(232,236,223,.2)"/>`);
+  T(30, 16, 'MENU', 8); T(sw - 30, 16, 'CHASE', 8);
+  T(8, 36, 'SCORE', 7, '#9aa597', 'start'); T(8, 50, '12,480', 13, '#e8ecdf', 'start');
+  T(sw - 8, 36, 'ROADKILL', 7, '#9aa597', 'end'); T(sw - 8, 50, '23', 13, '#e8ecdf', 'end');
+  const swipe = (x, y, len) => {
+    o.push(`<path d="M${x} ${y - len / 2}V${y + len / 2}M${x - 6} ${y - len / 2 + 7}L${x} ${y - len / 2}L${x + 6} ${y - len / 2 + 7}M${x - 6} ${y + len / 2 - 7}L${x} ${y + len / 2}L${x + 6} ${y + len / 2 - 7}" stroke="#ffb340" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+    T(x + 10, y - 7, land ? 'SWIPE ▲ GEAR UP' : '▲ GEAR UP', 9, '#ffb340', 'start'); T(x + 10, y + 7, land ? 'SWIPE ▼ GEAR DOWN' : '▼ GEAR DOWN', 9, '#ffb340', 'start');
+    if (!land) T(x + 10, y + 21, 'SWIPE', 8, '#9aa597', 'start');
+  };
+  const dtap = (x, y) => {
+    o.push(`<circle cx="${x}" cy="${y}" r="5" fill="#ffb340"/><circle cx="${x}" cy="${y}" r="10" fill="none" stroke="#ffb340" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="15" fill="none" stroke="#ffb340" stroke-width="1" opacity=".6"/>`);
+    T(x + 20, y - (land ? 0 : 6), land ? 'DOUBLE TAP · JUMP' : 'DOUBLE TAP', 9, '#ffb340', 'start');
+    if (!land) T(x + 20, y + 7, '= JUMP', 9, '#ffb340', 'start');
+  };
+  const fireBtn = (cx, cy, r) => C(cx, cy, r, 'FIRE', '#ff8a1f', '#ffe08a', 'rgba(255,100,20,.35)');
+  const jumpBtn = (cx, cy, r) => C(cx, cy, r, 'JUMP', '#ffb340', '#ffb340');
+  if (mode === 'slide') {
+    const zw = land ? sw * 0.15 : sw * 0.19, zt = sh * (land ? 0.34 : 0.3), zb = land ? sh - 6 : sh - 12 - bs;
+    for (const [x, a] of [[6, '◀'], [sw - 6 - zw, '▶']]) {
+      o.push(`<rect x="${x}" y="${zt}" width="${zw}" height="${zb - zt}" rx="12" fill="rgba(232,236,223,.06)" stroke="rgba(232,236,223,.35)" stroke-width="1.5" stroke-dasharray="6 5"/>`);
+      T(x + zw / 2, (zt + zb) / 2 - 10, a, 22); T(x + zw / 2, (zt + zb) / 2 + 12, 'HOLD', 9, '#9aa597');
+      T(x + zw / 2, (zt + zb) / 2 + 24, a === '◀' ? 'LEFT' : 'RIGHT', 9, '#9aa597');
+    }
+    const r = bs / 2;
+    if (land) { jumpBtn(6 + zw + 10 + r, sh - 6 - r, r); fireBtn(sw - 6 - zw - 10 - r, sh - 6 - r, r); swipe(vx - 70, sh * 0.52, 50); dtap(vx - 70, sh * 0.86); }
+    else { jumpBtn(8 + r, sh - 6 - r, r); fireBtn(sw - 8 - r, sh - 6 - r, r); swipe(vx - 34, sh * 0.5, 54); dtap(vx - 28, sh * 0.8); }
+  } else if (mode === 'wheel') {
+    const D = land ? sh * 0.42 : sw * 0.52, wx = sw - 6 - D / 2, wy = sh - 6 - D / 2, r = D / 2;
+    o.push(`<circle cx="${wx}" cy="${wy}" r="${r}" fill="rgba(9,14,13,.35)"/><g transform="translate(${wx} ${wy}) rotate(-18) scale(${r / 50})"><circle r="43" fill="none" stroke="#ffb340" stroke-width="8"/><path d="M-40 6 L-13 4 M40 6 L13 4 M0 14 L0 39" stroke="rgba(232,236,223,.5)" stroke-width="6" stroke-linecap="round" fill="none"/><circle r="13" fill="rgba(9,14,13,.8)" stroke="rgba(232,236,223,.5)" stroke-width="2"/><rect x="-3.5" y="-48" width="7" height="10" rx="2" fill="#ffb340"/></g>`);
+    o.push(`<path d="M${wx - r * 0.9} ${wy - r * 1.08}A${r * 1.15} ${r * 1.15} 0 0 1 ${wx + r * 0.2} ${wy - r * 1.2}" fill="none" stroke="#ffb340" stroke-width="2"/><path d="M${wx + r * 0.2 - 7} ${wy - r * 1.2 - 5}L${wx + r * 0.2} ${wy - r * 1.2}L${wx + r * 0.2 - 6} ${wy - r * 1.2 + 6}" fill="none" stroke="#ffb340" stroke-width="2"/>`);
+    T(wx - r * 0.35, wy - r * 1.32, 'TURN TO STEER', 9, '#ffb340');
+    const b2 = bs * 0.82, lw = bs * 0.8, lh = bs * 1.9, lx = 8, ly = sh - 6 - b2 - 12 - lh;
+    o.push(`<rect x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="12" fill="rgba(9,14,13,.6)" stroke="rgba(232,236,223,.35)" stroke-width="2"/><rect x="${lx + lw / 2 - 3}" y="${ly + 18}" width="6" height="${lh - 36}" rx="3" fill="#000" opacity=".6"/><circle cx="${lx + lw / 2}" cy="${ly + lh * 0.38}" r="${lw * 0.31}" fill="#2a2f2d" stroke="#ffb340" stroke-width="2"/>`);
+    T(lx + lw / 2, ly + 9, '▲', 9, '#ffb340'); T(lx + lw / 2, ly + lh - 9, '▼', 9, '#9aa597');
+    if (land) { T(lx + lw + 8, ly + 14, 'GEAR LEVER', 9, '#ffb340', 'start'); T(lx + lw + 8, ly + 27, 'push ▲ / pull ▼', 8, '#9aa597', 'start', 600); }
+    else T(lx, ly - 10, 'GEAR LEVER ▲▼', 9, '#ffb340', 'start');
+    jumpBtn(8 + b2 / 2, sh - 6 - b2 / 2, b2 / 2); fireBtn(8 + b2 * 1.5 + 10, sh - 6 - b2 / 2, b2 / 2);
+  } else {
+    const r = bs / 2;
+    jumpBtn(8 + r, sh - 6 - r, r); fireBtn(sw - 8 - r, sh - 6 - r, r);
+    const tw = Math.min(170, sw * 0.4);
+    o.push(`<rect x="${vx - tw / 2}" y="${sh - 34}" width="${tw}" height="22" rx="11" fill="rgba(9,14,13,.6)" stroke="rgba(232,236,223,.3)"/><rect x="${vx + tw * 0.18 - 9}" y="${sh - 31}" width="18" height="16" rx="8" fill="#ffb340"/>`);
+    T(vx - tw * 0.12, sh - 23, 'TILT', 8, '#9aa597');
+    if (land) { swipe(vx - 80, sh * 0.5, 50); dtap(vx - 160, sh * 0.72); } else { swipe(vx - 34, sh * 0.48, 54); dtap(vx - 28, sh * 0.8); }
+    T(vx, hy - 14, 'TOUCH STEERING OFF', 8, '#d4323a');
+  }
+  const ghosts = mode === 'gyro'
+    ? [-11, 11].map(a => `<rect width="${W}" height="${H}" rx="28" fill="none" stroke="rgba(255,179,64,.35)" stroke-width="2" stroke-dasharray="7 6" transform="rotate(${a} ${W / 2} ${H / 2})"/>`).join('') +
+      `<path d="M${W * 0.12} ${-22}Q${W / 2} ${-46} ${W * 0.88} ${-22}" fill="none" stroke="#ffb340" stroke-width="2.4"/><path d="M${W * 0.12 + 10} ${-30}L${W * 0.12} ${-22}L${W * 0.12 + 11} ${-15}M${W * 0.88 - 10} ${-30}L${W * 0.88} ${-22}L${W * 0.88 - 11} ${-15}" fill="none" stroke="#ffb340" stroke-width="2.4"/>` +
+      `<text x="${W / 2}" y="${-24}" font-size="11" font-weight="700" fill="#ffb340" text-anchor="middle" font-family="Chakra Petch, sans-serif" letter-spacing=".12em">TILT TO STEER</text>`
+    : '';
+  const camDot = land ? `<circle cx="${bz / 2}" cy="${H / 2}" r="2.5" fill="#333"/>` : `<circle cx="${W / 2}" cy="${bz / 2}" r="2.5" fill="#333"/>`;
+  return `<svg viewBox="${-pad} ${-pad - (mode === 'gyro' ? 18 : 0)} ${W + pad * 2} ${H + pad * 2 + (mode === 'gyro' ? 18 : 0)}" xmlns="http://www.w3.org/2000/svg">
+    <defs><clipPath id="mockClip-${mode}-${land ? 'l' : 'p'}"><rect x="${bz}" y="${bz}" width="${sw}" height="${sh}" rx="14"/></clipPath></defs>
+    ${ghosts}
+    <rect width="${W}" height="${H}" rx="28" fill="#0b0d0d" stroke="#3a403e" stroke-width="2"/>
+    <g clip-path="url(#mockClip-${mode}-${land ? 'l' : 'p'})"><g transform="translate(${bz} ${bz})">${o.join('')}</g></g>${camDot}
+  </svg>`;
+}
+function renderMock() {
+  const land = cfg.orient !== 'portrait';
+  const fig = (l) => `<figure class="${l === land ? 'sel' : ''}">${phoneSVG(cfg.touch, l)}<figcaption>${l ? 'Landscape' : 'Portrait'}${l === land ? ' · selected' : ''}</figcaption></figure>`;
+  $('mock').innerHTML = fig(true) + fig(false);
+  $('mockDesc').innerHTML = MOCK_DESC[cfg.touch].map(t => `<li>${t}</li>`).join('');
+  $('gyroRow').hidden = cfg.touch !== 'gyro';
+}
+
+/* start screen: the controls list follows the current bindings and touch mode */
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const TOUCH_KEYS = {
+  slide: [['Hold ◀ ▶', 'Hold the left / right side of the screen to steer'], ['Swipe ▲ ▼', 'Shift gear (automatic: swipe down and hold to brake)'], ['Double tap', 'Jump, or press JUMP'], ['FIRE', 'Hellfire, once charged by flattening zombies']],
+  wheel: [['Wheel', 'Turn the wheel bottom right to steer'], ['Gear lever', 'Push up / pull down to shift (automatic: pull down and hold to brake)'], ['JUMP · FIRE', 'Bottom left. FIRE sets off Hellfire once charged']],
+  gyro: [['Tilt', 'Tilt the phone like a wheel to steer'], ['Swipe ▲ ▼', 'Shift gear (automatic: swipe down and hold to brake)'], ['Double tap', 'Jump, or press JUMP'], ['FIRE', 'Hellfire, once charged by flattening zombies']],
+};
+function renderMenuKeys() {
+  const k = a => `<kbd>${esc(keyName(cfg.keys[a]))}</kbd>`, g = a => `<kbd>${esc(gpName(cfg.gp[a]))}</kbd>`;
+  const desk = [
+    [`${k('gearUp')} ${k('gearDown')}`, 'Gear up / gear down (automatic: hold gear down to brake)'],
+    [`${k('left')} ${k('right')}`, 'Steer left / right'],
+    [k('jump'), 'Jump'],
+    [k('special'), 'Hellfire: charge it by flattening zombies, then set the car ablaze'],
+    [`${k('camera')}`, 'Camera angle (right-drag to look around)'],
+    ['<kbd>Esc</kbd>', 'Pause menu &amp; settings (remap keys there)'],
+    ['<kbd>Gamepad</kbd>', `${g('gearUp')} / ${g('gearDown')} gears · ${g('left')} ${g('right')} or stick steer · ${g('jump')} jump · ${g('special')} Hellfire · ${g('camera')} camera · <kbd>${esc(gpName(GP_PAUSE))}</kbd> pause`],
+  ];
+  const touch = TOUCH_KEYS[cfg.touch].concat([['MENU', 'Pause &amp; settings: pick Gyro, Steering or Touch slide under Mobile']]);
+  $('menuKeys').innerHTML =
+    desk.map(([a, b]) => `<span class="k-desk">${a}</span><span class="k-desk">${b}</span>`).join('') +
+    `<span class="k-touch">${touch.map(([a, b]) => `<kbd>${a}</kbd><span>${b}</span>`).join('')}</span>`;
+}
 
 /* ---------- input ---------- */
-// Three input sources feed the same controls. Held state lives in keys (keyboard),
-// gp (gamepad) and tc (touch slide); one-shot actions call gearInput / jumpQueued.
-//   up / down : held  -> automatic brake / reverse
-//               press -> manual gear up / down
-//   steer     : -1..1 (positive = left)
-const keyMap = { KeyW: 'up', ArrowUp: 'up', KeyS: 'down', ArrowDown: 'down', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right', ControlLeft: 'nitro', ControlRight: 'nitro', KeyN: 'nitro' };
-const gp = { up: false, down: false, nitro: false, steer: 0 };
-const tc = { up: false, down: false, nitro: false, steer: 0 };
+// Input sources feed the same controls. Held state lives in keys (keyboard), gp (gamepad)
+// and tc (touch); one-shot actions call gearInput / jumpQueued / triggerSpecial.
+//   gear down held -> automatic brake / reverse; gear up / down pressed -> manual shift
+//   steer: -1..1 (positive = left)
+const gp = { down: false, steer: 0 };
+const tc = { down: false, steer: 0 };
 let jumpQueued = false;
 function gearInput(dir) { if (!S.auto) shiftGear(dir); }
+const actOfKey = code => { for (const a in cfg.keys) if (cfg.keys[a] === code) return a; return null; };
 
 addEventListener('keydown', e => {
-  const k = keyMap[e.code];
-  if (k) { keys[k] = true; if (S.state === 'play') e.preventDefault(); }
-  if (e.ctrlKey && S.state === 'play') e.preventDefault();
-  if (!e.repeat) {
-    if (k === 'up') gearInput(1);
-    if (k === 'down') gearInput(-1);
+  if (capKey) {
+    e.preventDefault();
+    if (e.code === 'Escape') cancelCapture(); else assignKey(capKey, e.code);
+    return;
   }
-  if (e.code === 'Space') { if (S.state === 'play') e.preventDefault(); if (!e.repeat) jumpQueued = true; }
-  if (e.code === 'KeyG' && !e.repeat) setAuto(!S.auto);
-  if (e.code === 'KeyP' || e.code === 'Escape') { if (S.state === 'play') pause(true); else if (S.state === 'paused') pause(false); }
-  if (e.code === 'KeyM' && !e.repeat) $('muteBtn').click();
-  if (e.code === 'KeyV' && !e.repeat) setView(viewI + 1);
-  if (e.code === 'KeyC' && !e.repeat) toggleCockpit();
-  if (e.code === 'Enter' && (S.state === 'menu' || S.state === 'over') && document.activeElement.tagName !== 'BUTTON') startGame();
-  if (e.code === 'KeyR' && S.state === 'over') startGame();
+  if (e.code === 'Escape') {
+    if (capGp) { cancelCapture(); return; }
+    if (S.state === 'play') pause(true);
+    else if (S.state === 'paused') pause(false);
+    else if (settingsFromMenu && settingsOpen()) closeMenuSettings();
+    return;
+  }
+  const act = actOfKey(e.code);
+  if (act) {
+    if (S.state === 'play') e.preventDefault();
+    if (act in keys) keys[act] = true;
+    if (!e.repeat) {
+      if (act === 'gearUp') gearInput(1);
+      else if (act === 'gearDown') gearInput(-1);
+      else if (act === 'jump') jumpQueued = true;
+      else if (act === 'special') triggerSpecial();
+      else if (act === 'camera' && S.state !== 'menu') setView(viewI + 1);
+    }
+  } else if (!e.repeat) {
+    if (e.code === 'KeyG') setAuto(!S.auto);
+    else if (e.code === 'KeyM') setSetting('sound', S.muted ? 'on' : 'off');
+    else if (e.code === 'KeyR' && S.state === 'over') startGame();
+  }
+  if (e.ctrlKey && S.state === 'play') e.preventDefault();
+  if (e.code === 'Enter' && (S.state === 'menu' || S.state === 'over') && !settingsOpen() && document.activeElement.tagName !== 'BUTTON') startGame();
 });
-addEventListener('keyup', e => { const k = keyMap[e.code]; if (k) keys[k] = false; });
+addEventListener('keyup', e => { const a = actOfKey(e.code); if (a && a in keys) keys[a] = false; });
 
-/* touch buttons: JUMP bottom-left, NOS (special ability) bottom-right */
-{
-  const jb = $('tJump');
-  jb.addEventListener('pointerdown', e => { e.preventDefault(); jumpQueued = true; jb.classList.add('down'); });
-  const off = () => jb.classList.remove('down');
-  jb.addEventListener('pointerup', off); jb.addEventListener('pointercancel', off); jb.addEventListener('pointerleave', off);
-  jb.addEventListener('contextmenu', e => e.preventDefault());
-  const nb = $('tNitro');
-  nb.addEventListener('pointerdown', e => { e.preventDefault(); tc.nitro = true; nb.classList.add('down'); try { nb.setPointerCapture(e.pointerId); } catch (_) {} });
-  const noff = () => { tc.nitro = false; nb.classList.remove('down'); };
-  nb.addEventListener('pointerup', noff); nb.addEventListener('pointercancel', noff); nb.addEventListener('lostpointercapture', noff);
-  nb.addEventListener('contextmenu', e => e.preventDefault());
+/* touch: JUMP / FIRE buttons (all modes) */
+const btnHeld = { down: false };
+function tapBtn(id, onPress) {
+  const b = $(id);
+  b.addEventListener('pointerdown', e => {
+    e.preventDefault(); e.stopPropagation();
+    try { b.setPointerCapture(e.pointerId); } catch (_) {}
+    b.classList.add('down'); onPress();
+  });
+  const off = () => b.classList.remove('down');
+  b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('lostpointercapture', off);
+  b.addEventListener('contextmenu', e => e.preventDefault());
+}
+tapBtn('tJump', () => { jumpQueued = true; });
+tapBtn('tSpecial', () => triggerSpecial());
+
+/* touch: steering wheel (wheel mode). Turn it by dragging around its centre; it springs back. */
+const wheelEl = $('tWheel'), wheelSvgEl = wheelEl.querySelector('svg');
+let wheelTouch = null, wheelAng = 0;   // degrees, + = clockwise = steer right
+const ptAngle = (e, r) => Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI;
+wheelEl.addEventListener('pointerdown', e => {
+  e.preventDefault(); e.stopPropagation();
+  try { wheelEl.setPointerCapture(e.pointerId); } catch (_) {}
+  const r = wheelEl.getBoundingClientRect();
+  wheelTouch = { id: e.pointerId, r, last: ptAngle(e, r) };
+  wheelEl.classList.add('on');
+});
+wheelEl.addEventListener('pointermove', e => {
+  if (!wheelTouch || e.pointerId !== wheelTouch.id) return;
+  const a = ptAngle(e, wheelTouch.r);
+  let d = a - wheelTouch.last; if (d > 180) d -= 360; if (d < -180) d += 360;
+  wheelTouch.last = a;
+  wheelAng = clamp(wheelAng + d, -150, 150);
+});
+const wheelOff = e => { if (wheelTouch && e.pointerId === wheelTouch.id) { wheelTouch = null; wheelEl.classList.remove('on'); } };
+wheelEl.addEventListener('pointerup', wheelOff); wheelEl.addEventListener('pointercancel', wheelOff); wheelEl.addEventListener('lostpointercapture', wheelOff);
+wheelEl.addEventListener('contextmenu', e => e.preventDefault());
+
+/* touch: gear lever (wheel mode). Push up = shift up, pull down = shift down (automatic: hold down to brake).
+   A quick tap on the top / bottom half also shifts. */
+const lever = $('tLever'), leverKnob = $('leverKnob');
+let lv = null;
+lever.addEventListener('pointerdown', e => {
+  e.preventDefault(); e.stopPropagation();
+  try { lever.setPointerCapture(e.pointerId); } catch (_) {}
+  lv = { id: e.pointerId, y0: e.clientY, t0: performance.now(), fired: 0, r: lever.getBoundingClientRect(), moved: 0 };
+});
+lever.addEventListener('pointermove', e => {
+  if (!lv || e.pointerId !== lv.id) return;
+  const lim = lv.r.height * 0.3, dy = clamp(e.clientY - lv.y0, -lim, lim);
+  lv.moved = Math.max(lv.moved, Math.abs(dy));
+  leverKnob.style.transform = `translate(-50%, calc(-50% + ${dy}px))`;
+  if (!lv.fired && dy <= -lim * 0.7) { lv.fired = 1; gearInput(1); lever.classList.add('up'); }
+  if (!lv.fired && dy >= lim * 0.7) { lv.fired = -1; gearInput(-1); lever.classList.add('dn'); }
+  btnHeld.down = dy > lim * 0.5;
+});
+const leverOff = e => {
+  if (!lv || e.pointerId !== lv.id) return;
+  if (!lv.fired && lv.moved < 8 && performance.now() - lv.t0 < 300 && e.type === 'pointerup') gearInput(e.clientY < lv.r.top + lv.r.height / 2 ? 1 : -1);
+  lv = null; btnHeld.down = false;
+  leverKnob.style.transform = ''; lever.classList.remove('up', 'dn');
+};
+lever.addEventListener('pointerup', leverOff); lever.addEventListener('pointercancel', leverOff); lever.addEventListener('lostpointercapture', leverOff);
+lever.addEventListener('contextmenu', e => e.preventDefault());
+
+/* touch: gyro (gyro mode). Steering = how far the phone is turned about the screen's axis,
+   relative to where it was when the run started (or Re-center tilt was pressed). Using the
+   gravity vector keeps this the same on iOS and Android, in portrait and landscape. */
+const gyro = { on: false, rot: null, center: null, seen: 0, startT: 0, fallback: false, steer: 0 };
+function onMotion(e) {
+  const a = e.accelerationIncludingGravity;
+  if (!a || a.x == null || a.y == null) return;
+  if (Math.hypot(a.x, a.y) < 2.5) return;     // phone lying flat: no usable roll
+  const r = Math.atan2(a.x, a.y);
+  gyro.rot = gyro.rot === null ? r : gyro.rot + angDiff(r, gyro.rot) * 0.35;
+  if (gyro.center === null) gyro.center = gyro.rot;
+  gyro.seen = performance.now();
+}
+function startGyro(recenter) {
+  const go = () => {
+    if (!gyro.on) { addEventListener('devicemotion', onMotion); gyro.on = true; }
+    if (recenter) gyro.center = gyro.rot;
+    gyro.fallback = false; gyro.startT = performance.now();
+  };
+  const DM = window.DeviceMotionEvent;
+  if (!DM) { gyro.fallback = true; return; }
+  if (typeof DM.requestPermission === 'function') DM.requestPermission().then(r => { if (r === 'granted') go(); else gyro.fallback = true; }).catch(() => { gyro.fallback = true; });
+  else go();
+}
+$('gyroCenter').addEventListener('click', () => startGyro(true));
+const gyroActive = () => touchMode && cfg.touch === 'gyro' && !gyro.fallback;
+
+/* touch: screen gestures. slide mode: hold left / right half to steer; slide + gyro modes:
+   swipe up / down to shift, double tap to jump. Mouse (left button) always acts as slide mode. */
+const gestures = new Map();
+const SWIPE = 38, SHIFT_STEP = 70, TAP_MS = 260, TAP_MOVE = 16, DOUBLE_MS = 340;
+let lastTap = { t: -1e9, x: 0, y: 0 };
+const tapFx = $('tapFx');
+function tapFlash(x, y) { tapFx.style.left = x + 'px'; tapFx.style.top = y + 'px'; tapFx.classList.remove('go'); void tapFx.offsetWidth; tapFx.classList.add('go'); }
+function gestureMode(e) { return e.pointerType === 'mouse' ? 'slide' : cfg.touch; }
+function gestureStart(e) {
+  const m = gestureMode(e);
+  if (m === 'wheel') return false;
+  const steerOK = m === 'slide' || (m === 'gyro' && gyro.fallback);
+  gestures.set(e.pointerId, { x0: e.clientX, y0: e.clientY, ax: e.clientY, t0: performance.now(), steerOK, steer: steerOK ? (e.clientX < innerWidth / 2 ? 1 : -1) : 0, swipe: false, down: false, moved: 0 });
+  return true;
+}
+function gestureMove(e) {
+  const g = gestures.get(e.pointerId); if (!g) return;
+  const dx = e.clientX - g.x0, dy = e.clientY - g.y0;
+  g.moved = Math.max(g.moved, Math.hypot(dx, dy));
+  if (!g.swipe && Math.abs(dy) > SWIPE && Math.abs(dy) > Math.abs(dx) * 1.2) {
+    g.swipe = true; g.steer = 0; g.ax = e.clientY;      // a swipe, not a steer: shift once
+    gearInput(dy < 0 ? 1 : -1);
+  } else if (g.swipe && Math.abs(e.clientY - g.ax) > SHIFT_STEP + SWIPE) {
+    const dir = e.clientY < g.ax ? 1 : -1; g.ax = e.clientY - dir * SWIPE; gearInput(dir);   // long swipe: keep shifting
+  }
+  if (!g.swipe && g.steerOK) g.steer = e.clientX < innerWidth / 2 ? 1 : -1;
+  g.down = g.swipe && dy > SWIPE;         // automatic: swipe down and hold to brake
+}
+function gestureEnd(e) {
+  const g = gestures.get(e.pointerId); if (!g) return;
+  gestures.delete(e.pointerId);
+  const now = performance.now();
+  if (!g.swipe && now - g.t0 < TAP_MS && g.moved < TAP_MOVE && e.type === 'pointerup') {
+    if (now - lastTap.t < DOUBLE_MS && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 160) {
+      jumpQueued = true; lastTap.t = -1e9; tapFlash(e.clientX, e.clientY);
+    } else lastTap = { t: now, x: e.clientX, y: e.clientY };
+  }
 }
 addEventListener('blur', () => {
   for (const k in keys) keys[k] = false;
-  tc.up = tc.down = tc.nitro = false; tc.steer = 0;
+  gestures.clear(); btnHeld.down = false; wheelTouch = null; lv = null;
+  document.querySelectorAll('.pad .tb').forEach(b => b.classList.remove('down'));
 });
 
-/* gamepad (standard mapping): stick / D-pad steer, A gear up, B gear down,
-   Y jump, X nitrous, D-pad up camera, Start pause */
-const gpPrev = [];
+/* per frame: fold every touch source into tc and update the on-screen controls */
+const zoneL = $('zoneL'), zoneR = $('zoneR'), tiltNeedle = $('tiltNeedle'), specialBtn = $('tSpecial');
+let gyroStatusT = 0, gyroWarned = false;
+function tickTouch(dt) {
+  if (!wheelTouch) wheelAng *= Math.exp(-dt * 10);
+  if (Math.abs(wheelAng) < 0.05 && !wheelTouch) wheelAng = 0;
+  wheelSvgEl.style.transform = `rotate(${wheelAng.toFixed(1)}deg)`;
+  const wheelSteer = cfg.touch === 'wheel' ? -clamp(wheelAng / (WHEEL_LOCK[cfg.sens] || 95), -1, 1) : 0;
+  gyro.steer = 0;
+  if (gyro.rot !== null && gyro.center !== null) {
+    let d = angDiff(gyro.rot, gyro.center);
+    d = Math.abs(d) < 0.03 ? 0 : d - Math.sign(d) * 0.03;
+    gyro.steer = clamp(d / (TILT_LOCK[cfg.sens] || 0.44), -1, 1);
+  }
+  const now = performance.now();
+  if (touchMode && cfg.touch === 'gyro' && S.state === 'play' && !gyro.fallback && now - gyro.startT > 2000 && now - gyro.seen > 2000) {
+    gyro.fallback = true;
+    if (!gyroWarned) { gyroWarned = true; toast('NO TILT SENSOR · HOLD SCREEN SIDES TO STEER', 'hurt', 3); }
+  }
+  let st = 0, down = btnHeld.down, l = false, r = false;
+  for (const g of gestures.values()) { st += g.steer; down = down || g.down; l = l || g.steer > 0; r = r || g.steer < 0; }
+  st = clamp(st, -1, 1) * (SENS[cfg.sens] || 0.82) + wheelSteer + (gyroActive() ? gyro.steer : 0);
+  tc.steer = clamp(st, -1, 1); tc.down = down;
+  zoneL.classList.toggle('on', l); zoneR.classList.toggle('on', r);
+  tiltNeedle.style.transform = `translateX(${(-gyro.steer * 70).toFixed(1)}px)`;
+  if (settingsOpen() && curTab === 'mobile' && cfg.touch === 'gyro' && (gyroStatusT -= dt) <= 0) {
+    gyroStatusT = 0.15;
+    const deg = Math.round(-gyro.steer * (TILT_LOCK[cfg.sens] || 0.44) * 180 / Math.PI);
+    $('gyroStatus').textContent = gyro.rot === null ? (gyro.fallback ? 'Tilt: no motion sensor found' : 'Tilt: waiting for the motion sensor…') : 'Tilt: ' + (deg === 0 ? 'centred' : Math.abs(deg) + '° ' + (deg > 0 ? 'right' : 'left'));
+  }
+}
+
+/* gamepad (standard mapping). The left stick always steers; everything else follows cfg.gp.
+   Start is fixed to pause / back. */
+const gpPrev = [], gpLive = [];
+let gpLabel = '', gpConnected = false;
+const stickEls = [...gpSvg.querySelectorAll('g[data-stick]')];
 function pollGamepad() {
   const list = navigator.getGamepads ? navigator.getGamepads() : [];
   let p = null;
   for (const q of list) if (q && q.connected) { p = q; break; }
-  if (!p) { gp.up = gp.down = gp.nitro = false; gp.steer = 0; return; }
-  const btn = i => !!(p.buttons[i] && p.buttons[i].pressed);
-  const now = [], edge = [];
-  for (let i = 0; i < 17; i++) { now[i] = btn(i); edge[i] = now[i] && !gpPrev[i]; gpPrev[i] = now[i]; }
+  gpConnected = !!p;
+  const label = p ? 'Connected: ' + p.id.replace(/\s*\(.*$/, '').slice(0, 48) : 'No gamepad detected. Connect one and press any button.';
+  if (label !== gpLabel) {
+    gpLabel = label; $('gpStatus').textContent = label;
+    const style = p && /054c|playstation|dualshock|dualsense/i.test(p.id) ? 'ps' : 'xbox';
+    if (style !== gpStyle) { gpStyle = style; renderGp(); renderMenuKeys(); }
+  }
+  if (!p) { gp.down = false; gp.steer = 0; return; }
+  const n = Math.max(17, p.buttons.length), now = [], edge = [];
+  for (let i = 0; i < n; i++) { now[i] = !!(p.buttons[i] && p.buttons[i].pressed); edge[i] = now[i] && !gpPrev[i]; gpPrev[i] = now[i]; }
   let ax = p.axes[0] || 0;
-  if (Math.abs(ax) < 0.2) ax = 0;
-  gp.steer = clamp(-ax + (now[14] ? 1 : 0) - (now[15] ? 1 : 0), -1, 1);
-  gp.up = now[0]; gp.down = now[1]; gp.nitro = now[2];
+  ax = Math.abs(ax) < 0.15 ? 0 : Math.sign(ax) * Math.min(1, (Math.abs(ax) - 0.15) / 0.7);
   if (now.some(Boolean) || ax) setTouchMode(false);
-  if (edge[9]) { if (S.state === 'play') pause(true); else if (S.state === 'paused') pause(false); }
-  if (S.state === 'menu' || S.state === 'over') { if (edge[0] || edge[9]) startGame(); return; }
-  if (S.state === 'paused') { if (edge[0]) pause(false); if (edge[1]) toMenu(); return; }
-  if (edge[0]) gearInput(1);
-  if (edge[1]) gearInput(-1);
-  if (edge[3]) jumpQueued = true;
-  if (edge[12]) setView(viewI + 1);
+  // live view on the gamepad drawing
+  if (settingsOpen() && curTab === 'gamepad') {
+    for (let i = 0; i < 17; i++) if (gpLive[i] !== now[i]) { gpLive[i] = now[i]; const e = gpBtnEls[i]; if (e) e.classList.toggle('live', now[i]); }
+    stickEls.forEach((g, i) => g.setAttribute('transform', `translate(${((p.axes[i * 2] || 0) * 8).toFixed(1)} ${((p.axes[i * 2 + 1] || 0) * 8).toFixed(1)})`));
+  }
+  const m = cfg.gp, hit = a => !!edge[m[a]], held = a => !!now[m[a]];
+  if (capGp) {
+    const i = edge.findIndex(Boolean);
+    if (i === GP_PAUSE) cancelCapture(); else if (i >= 0) assignGp(capGp, i);
+    gp.down = false; gp.steer = 0;
+    return;
+  }
+  gp.steer = clamp(-ax + (held('left') ? 1 : 0) - (held('right') ? 1 : 0), -1, 1);
+  gp.down = held('gearDown');
+  if (S.state === 'menu' || S.state === 'over') {
+    if (!settingsOpen() && (hit('gearUp') || edge[GP_PAUSE])) startGame();
+    else if (settingsFromMenu && settingsOpen() && edge[GP_PAUSE]) closeMenuSettings();
+    return;
+  }
+  if (edge[GP_PAUSE]) { if (S.state === 'play') pause(true); else if (S.state === 'paused') pause(false); return; }
+  if (S.state !== 'play') return;
+  if (hit('gearUp')) gearInput(1);
+  if (hit('gearDown')) gearInput(-1);
+  if (hit('jump')) jumpQueued = true;
+  if (hit('special')) triggerSpecial();
+  if (hit('camera')) setView(viewI + 1);
 }
 
-/* stage: touch slide controls while driving; otherwise drag to orbit the camera */
-const stage = $('stage'), ring = $('swipeRing');
-let drag = null, swipe = null;
-const STEER_DEAD = 12, STEER_FULL = 70, SHIFT_STEP = 55, HOLD_DEAD = 40;
+/* stage: while driving, a press is a touch gesture (fingers, or the left mouse button).
+   Right mouse drag, or any drag outside a run, orbits the camera; scroll zooms. */
+const stage = $('stage');
+let drag = null;
+stage.addEventListener('contextmenu', e => e.preventDefault());
 stage.addEventListener('pointerdown', e => {
-  if (e.pointerType === 'touch' && S.state === 'play') {
-    if (swipe) return;                       // one steering finger at a time
-    e.preventDefault();
-    swipe = { id: e.pointerId, x0: e.clientX, y0: e.clientY, ax: e.clientX, ay: e.clientY };
-    try { stage.setPointerCapture(e.pointerId); } catch (_) {}
-    ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-    ring.firstChild.style.transform = '';
-    ring.classList.add('on');
+  if (S.state === 'play' && e.button === 0) {
+    if (gestureStart(e)) { try { stage.setPointerCapture(e.pointerId); } catch (_) {} }
     return;
   }
   if (drag) return;
@@ -1139,22 +1994,7 @@ stage.addEventListener('pointerdown', e => {
   try { stage.setPointerCapture(e.pointerId); } catch (_) {}
 });
 stage.addEventListener('pointermove', e => {
-  if (swipe && e.pointerId === swipe.id) {
-    const x = e.clientX, y = e.clientY, dx = x - swipe.x0, dy = y - swipe.y0;
-    // steer: offset from where the finger landed, held as long as the finger stays there
-    const sx = Math.abs(dx) < STEER_DEAD ? 0 : (Math.abs(dx) - STEER_DEAD) / (STEER_FULL - STEER_DEAD);
-    tc.steer = -Math.sign(dx) * Math.min(1, sx);
-    // gear: each mostly-vertical slide of SHIFT_STEP px shifts once
-    const sdx = x - swipe.ax, sdy = y - swipe.ay;
-    if (Math.abs(sdy) > SHIFT_STEP && Math.abs(sdy) > Math.abs(sdx) * 1.3) { gearInput(sdy < 0 ? 1 : -1); swipe.ax = x; swipe.ay = y; }
-    else if (Math.abs(sdx) > SHIFT_STEP) { swipe.ax = x; swipe.ay = y; }
-    // automatic: slide down and hold to brake, slide up to pull away from reverse
-    tc.down = dy > HOLD_DEAD && Math.abs(dy) > Math.abs(dx);
-    tc.up = dy < -HOLD_DEAD && Math.abs(dy) > Math.abs(dx);
-    const k = Math.min(1, 60 / (Math.hypot(dx, dy) || 1));
-    ring.firstChild.style.transform = `translate(${dx * k}px, ${dy * k}px)`;
-    return;
-  }
+  if (gestures.has(e.pointerId)) { gestureMove(e); return; }
   if (!drag || e.pointerId !== drag.id) return;
   const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
   drag.x = e.clientX; drag.y = e.clientY;
@@ -1167,15 +2007,15 @@ stage.addEventListener('pointermove', e => {
   }
 });
 const endDrag = e => {
-  if (swipe && e.pointerId === swipe.id) {
-    swipe = null; tc.steer = 0; tc.up = tc.down = false;
-    ring.classList.remove('on');
-  }
+  if (gestures.has(e.pointerId)) { gestureEnd(e); return; }
   if (drag && e.pointerId === drag.id) { drag = null; stage.classList.remove('dragging'); }
 };
-stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag); stage.addEventListener('lostpointercapture', endDrag);
+stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+stage.addEventListener('lostpointercapture', e => { if (gestures.has(e.pointerId)) gestureEnd(e); });
 stage.addEventListener('wheel', e => { e.preventDefault(); CAM.dist = clamp(CAM.dist * (1 + Math.sign(e.deltaY) * 0.08), 4.5, 22); }, { passive: false });
-stage.addEventListener('dblclick', () => setView(viewI));
+stage.addEventListener('dblclick', () => { if (S.state !== 'play') setView(viewI); });
+
+applySettings();
 
 /* ---------- main loop ---------- */
 const look = new THREE.Vector3();
@@ -1184,10 +2024,10 @@ function update(dt) {
   clock += dt;
   const playing = S.state === 'play';
   const wrecked = S.state === 'dying' || S.state === 'over';
-  let throttle = 0, brake = 0, steer = 0, boost = false;
+  let throttle = 0, brake = 0, steer = 0;
   S.shiftT -= dt; S.jumpCD -= dt;
   if (playing) {
-    const hDown = keys.down || gp.down || tc.down;
+    const hDown = keys.gearDown || gp.down || tc.down;
     if (S.auto) {
       // automatic: drives itself; hold down to brake, keep holding at a stop to reverse,
       // let go to stop and pull away forward again
@@ -1207,7 +2047,6 @@ function update(dt) {
       brake = S.gear === 1 ? 0.22 : 0;
     }
     steer = clamp((keys.left ? 1 : 0) - (keys.right ? 1 : 0) + gp.steer + tc.steer, -1, 1);
-    boost = (keys.nitro || gp.nitro || tc.nitro) && S.nitro > 0 && S.speed > 5 && S.gear >= 2;
   }
   const grounded = S.y <= groundY() + 0.02 && S.vy <= 0;
   if (jumpQueued) {
@@ -1225,11 +2064,11 @@ function update(dt) {
     const v = S.speed;
     let a = 0;
     if (gear.max > 0) {
-      const top = gear.max * (boost ? 1.28 : 1), r = Math.max(0, v) / gear.max;
+      const top = gear.max, r = Math.max(0, v) / gear.max;
       if (v > top + 0.5) a = -Math.min(9, (v - top) * 2.5);              // over-rev: engine braking
       else if (throttle && !shifting) {
         if (v < 0) a = gear.acc;
-        else if (v < top - 0.2) a = gear.acc * (S.gear === 2 ? 1 : clamp(0.2 + r * 1.9, 0.2, 1)) + (boost ? 18 : 0);
+        else if (v < top - 0.2) a = gear.acc * (S.gear === 2 ? 1 : clamp(0.2 + r * 1.9, 0.2, 1));
       } else if (v > 0) a = -(1.2 + r * 3.5);
     } else if (gear.max < 0) {
       if (throttle && !shifting) a = v > gear.max ? -gear.acc : 0;
@@ -1238,7 +2077,7 @@ function update(dt) {
     S.speed += a * dt;
     S.speed -= Math.sign(S.speed) * Math.min(Math.abs(S.speed), 1.2 * dt);
     if (brake) S.speed -= Math.sign(S.speed) * Math.min(Math.abs(S.speed), 48 * brake * dt);
-    if (Math.abs(S.d) > ROAD_HALF) S.speed *= Math.max(0, 1 - 0.5 * dt);
+    if (Math.abs(S.d) > halfAt(S.s)) S.speed *= Math.max(0, 1 - 0.5 * dt);
   }
   {
     let rpmT = gear.max === 0 ? (throttle ? 0.95 : 0.12) : 0.12 + 0.88 * Math.min(1.12, Math.abs(S.speed) / Math.abs(gear.max));
@@ -1253,7 +2092,6 @@ function update(dt) {
   shifter.rotation.z = S.gear <= 3 ? 0.25 : S.gear >= 6 ? -0.25 : 0;
   steerWheel.rotation.z = S.steerS * 1.7;
   if (wrecked) S.speed *= Math.max(0, 1 - 2 * dt);
-  if (boost) S.nitro = Math.max(0, S.nitro - 26 * dt); else if (playing) S.nitro = Math.min(100, S.nitro + 2.2 * dt);
 
   // steering in road-relative frame: the road curves away underneath you
   S.steerS += (steer - S.steerS) * Math.min(1, dt * 8);
@@ -1270,9 +2108,13 @@ function update(dt) {
   S.d -= S.speed * Math.sin(S.rel) * dt;
   S.maxS = Math.max(S.maxS, S.s);
   if (S.s < S.maxS - 22) { S.s = S.maxS - 22; S.speed = Math.max(0, S.speed); }
-  if (Math.abs(S.d) > WALL) {
-    S.d = Math.sign(S.d) * WALL;
-    if (S.wallCD <= 0 && Math.abs(S.speed) > 6) {
+  const wl = wallAt(S.s);
+  if (Math.abs(S.d) > wl) {
+    // how fast we're closing on the wall; where the road narrows the wall also comes to us
+    const closeIn = (Math.abs(S.d) - wl) / Math.max(dt, 1e-3);
+    S.d = Math.sign(S.d) * wl;
+    if (closeIn < 2.5) { S.rel *= Math.max(0, 1 - 4 * dt); S.speed *= Math.max(0, 1 - 0.25 * dt); }
+    else if (S.wallCD <= 0 && Math.abs(S.speed) > 6) {
       hurt(3 + Math.abs(S.speed) * 0.14);
       worldAt(S.s, S.d, W); burst(W.x, 0.8 + S.y, W.z, PM.spark, 12, 6, 6, 0.5);
       thud(0.5, 500, 0.2);
@@ -1285,14 +2127,14 @@ function update(dt) {
   for (const f of feats) {
     if (f.type === 'bump') {
       if ((prevS < f.s && S.s >= f.s) || (prevS > f.s && S.s <= f.s)) {
-        if (S.y <= groundY() + 0.1 && Math.abs(S.d) < ROAD_HALF + 0.5) {
+        if (S.y <= groundY() + 0.1 && Math.abs(S.d) < halfAt(f.s) + 0.5) {
           const v = Math.abs(S.speed);
           if (v > 12) { S.vy = 3 + v * 0.17; thud(0.4, 160, 0.2); if (playing && v > 30) toast('SEND IT', 'kill', 1); }
           else S.vy = 1.6;
           worldAt(S.s, S.d, W); burst(W.x, 0.3, W.z, PM.dust, 6, 3, 2, 0.8, true, 1.5);
         }
       }
-    } else if (!f.hit && grounded && Math.abs(f.s - S.s) < f.r * 1.35 + 1.8 && Math.abs(f.d - S.d) < f.r + 0.8) {
+    } else if (f.type === 'hole' && S.fireT <= 0 && !f.hit && grounded && Math.abs(f.s - S.s) < f.r * 1.35 + 1.8 && Math.abs(f.d - S.d) < f.r + 0.8) {
       f.hit = true;
       const v = Math.abs(S.speed);
       if (v > 8) {
@@ -1340,8 +2182,7 @@ function update(dt) {
   for (const w of wheels) w.rotation.x -= S.speed * dt / 0.43;
   for (const p of frontPivots) p.rotation.y += (S.steerS * 0.45 - p.rotation.y) * Math.min(1, dt * 10);
   tailMat.color.setHex(brake ? 0xff5050 : 0xc01818);
-  for (const f of flamesN) { f.visible = boost; f.scale.set(1, 1, 0.7 + Math.random() * 0.8); }
-  if (boost && Math.random() < 0.5) burst(cx - fx * 2.6, S.y + 0.4, cz - fz * 2.6, PM.nitro, 1, 1, 1, 0.3);
+  updateFire(dt, cx, cz, fx, fz);
 
   if (playing) {
     if (ds > 0) { S.score += ds; S.dist += ds; }
@@ -1376,20 +2217,31 @@ function update(dt) {
   const pAir = S.y - groundY() > 1.3;
   for (let i = traffic.length - 1; i >= 0; i--) {
     const t = traffic[i];
+    if (t.dead) {
+      // wrecked by Hellfire: tumble, burn, then disappear
+      t.deadT += dt;
+      const q = t.g.position;
+      t.vel.y -= 25 * dt; q.addScaledVector(t.vel, dt);
+      t.g.rotation.x += t.spin.x * dt; t.g.rotation.y += t.spin.y * dt; t.g.rotation.z += t.spin.z * dt;
+      if (q.y < 0) { q.y = 0; t.vel.multiplyScalar(0.45); t.vel.y = Math.abs(t.vel.y) * 0.3; t.spin.multiplyScalar(0.6); }
+      if (Math.random() < 0.35) burst(q.x, q.y + 1, q.z, Math.random() < 0.5 ? PM.ember : PM.smoke, 1, 0.6, 2, 1, true, 1.6);
+      if (t.deadT > 3.2) removeTraffic(i);
+      continue;
+    }
     if (t.s < S.s - 95 || t.s > S.s + 340) { removeTraffic(i); continue; }
     t.cd -= dt; t.lcCD -= dt; t.changeT -= dt;
     let gap = Infinity, lspd = 0;
     for (const o of traffic) {
-      if (o === t || o.s <= t.s || Math.abs(o.d - t.d) > 2.7) continue;
+      if (o === t || o.dead || o.s <= t.s || Math.abs(o.d - t.d) > 3.2) continue;
       const g2 = (o.s - o.hl) - (t.s + t.hl);
       if (g2 < gap) { gap = g2; lspd = o.speed; }
     }
-    if (Math.abs(S.d - t.d) < 2.7 && S.s > t.s) { const g2 = (S.s - 2.2) - (t.s + t.hl); if (g2 < gap) { gap = g2; lspd = Math.max(0, S.speed); } }
+    if (Math.abs(S.d - t.d) < 3.2 && S.s > t.s) { const g2 = (S.s - 2.2) - (t.s + t.hl); if (g2 < gap) { gap = g2; lspd = Math.max(0, S.speed); } }
     let target = t.cruise;
     if (gap < 24 && lspd < t.speed + 1) {
       if (t.lane === t.tLane && t.lcCD <= 0) {
         for (const opt of [t.lane - 1, t.lane + 1].sort(() => Math.random() - 0.5)) {
-          if (opt < -1 || opt > 1) continue;
+          if (opt < 0 || opt > 3 || !laneOpenRange(opt, t.s, t.s + 90)) continue;
           if (laneFree(opt, t.s - 12, t.s + 24, t)) { t.tLane = opt; t.lcCD = 3; break; }
         }
       }
@@ -1399,12 +2251,19 @@ function update(dt) {
       t.changeT = rand(7, 15);
       if (t.lane === t.tLane && Math.random() < 0.5) {
         const opt = t.lane + (Math.random() < 0.5 ? -1 : 1);
-        if (opt >= -1 && opt <= 1 && laneFree(opt, t.s - 12, t.s + 24, t)) t.tLane = opt;
+        if (opt >= 0 && opt <= 3 && laneOpenRange(opt, t.s, t.s + 90) && laneFree(opt, t.s - 12, t.s + 24, t)) t.tLane = opt;
       }
     }
+    // outer lane ends ahead: indicate and merge in, slowing down if the inner lane is busy
+    if ((t.tLane === 0 || t.tLane === 3) && !laneOpenRange(t.tLane, t.s, t.s + 75)) {
+      const inner = t.tLane === 0 ? 1 : 2;
+      if (laneFree(inner, t.s - 10, t.s + 18, t) || !laneOpenRange(t.tLane, t.s, t.s + 25)) { t.tLane = inner; t.lcCD = 3; }
+      else target = Math.min(target, 9);
+    }
     t.speed = Math.max(0, t.speed + clamp(target - t.speed, -16 * dt, 5 * dt));
-    const diff = t.tLane * LANE - t.d;
-    t.d += clamp(diff, -2.3 * dt, 2.3 * dt);
+    const diff = laneD(t.tLane) - t.d;
+    t.d += clamp(diff, -2.6 * dt, 2.6 * dt);
+    { const lim = halfAt(t.s) - t.hw - 0.3; t.d = clamp(t.d, -lim, lim); }
     t.yaw = -Math.sign(diff) * Math.min(1, Math.abs(diff)) * 0.09;
     if (Math.abs(diff) < 0.05) t.lane = t.tLane;
     const blink = Math.abs(diff) > 0.05 && (clock * 2.6) % 1 < 0.5;
@@ -1414,6 +2273,7 @@ function update(dt) {
     // collide with player
     const dS = t.s - S.s, dD = t.d - S.d;
     const ps = (t.hl + 2.2) - Math.abs(dS), pd = (t.hw + 1.05) - Math.abs(dD);
+    if (ps > 0 && pd > 0 && !pAir && S.state === 'play' && S.fireT > 0) { wreckTraffic(t); continue; }
     if (ps > 0 && pd > 0 && !pAir && S.state !== 'menu') {
       worldAt((t.s + S.s) / 2, (t.d + S.d) / 2, W);
       if (pd < ps * 0.6) {
@@ -1447,11 +2307,10 @@ function update(dt) {
     const ah = t.s > S.s;
     if (t.ahead && !ah && playing && S.speed > t.speed) {
       const gapD = Math.abs(t.d - S.d);
-      if (gapD < 5.5) {
-        const close = gapD < 3.3;
+      if (gapD < 6.4) {
+        const close = gapD < 3.9;
         const pts = (close ? 150 : 50) * S.combo;
         S.score += pts; S.passes++;
-        S.nitro = Math.min(100, S.nitro + (close ? 6 : 2));
         if (close) { toast('CLOSE CALL +' + pts, 'pick', 1); chime(1.5); } else toast('OVERTAKE +' + pts, 'pick', 0);
       }
     }
@@ -1471,9 +2330,9 @@ function update(dt) {
       if (u.alive) {
         const dist = Math.hypot(dS, dD);
         if (dist < 70 && dist > 2.6) { const sp = u.walk * dt; u.s -= dS / dist * sp; u.d -= dD / dist * sp; }
-        u.d = clamp(u.d, -9.2, 9.2);
+        { const wl2 = wallAt(u.s) - 0.1; u.d = clamp(u.d, -wl2, wl2); }
         worldAt(u.s, u.d, W);
-        p.set(W.x, Math.abs(u.d) > ROAD_HALF ? CURB_Y : 0, W.z);
+        p.set(W.x, Math.abs(u.d) > halfAt(u.s) ? CURB_Y : 0, W.z);
         e.rotation.y = Math.atan2(cx - W.x, cz - W.z);
         u.phase += dt * u.walk * 3.5;
         u.legL.rotation.x = Math.sin(u.phase) * 0.55; u.legR.rotation.x = -Math.sin(u.phase) * 0.55;
@@ -1481,14 +2340,14 @@ function update(dt) {
         e.rotation.z = Math.sin(u.phase) * 0.06;
         u.cd -= dt;
         if (touching && S.state === 'play') {
-          if (Math.abs(S.speed) > (u.brute ? 24 : 4)) killZombie(e, fx, fz, lx, true);
+          if (S.fireT > 0 || Math.abs(S.speed) > (u.brute ? 24 : 4)) killZombie(e, fx, fz, lx, true);
           else if (u.cd <= 0) {
             u.cd = 0.6; hurt(u.brute ? 10 : 3);
             if (u.brute) { S.speed *= 0.2; u.s += 2.5; thud(0.7, 180, 0.3); toast('BRUTE! GO FASTER', 'hurt', 2); }
           }
-        } else if (Math.abs(u.d) < ROAD_HALF + 0.5) {
+        } else if (Math.abs(u.d) < halfAt(u.s) + 0.5) {
           for (const t of traffic) {
-            if (Math.abs(t.s - u.s) < t.hl + u.r && Math.abs(t.d - u.d) < t.hw + u.r && t.speed > 4) {
+            if (!t.dead && Math.abs(t.s - u.s) < t.hl + u.r && Math.abs(t.d - u.d) < t.hw + u.r && t.speed > 4) {
               const th = W.th; killZombie(e, -Math.sin(th), -Math.cos(th), u.d - t.d, false, t.speed); break;
             }
           }
@@ -1514,10 +2373,9 @@ function update(dt) {
       u.core.rotation.y += dt * 2.5;
       u.core.position.y = 1.1 + Math.sin(clock * 3 + u.s) * 0.15;
       if (touching && S.state === 'play') {
-        if (u.kind === 'repair') { S.health = Math.min(100, S.health + 30); toast('HULL +30', 'pick', 2); }
-        else { S.nitro = Math.min(100, S.nitro + 45); toast('NITROUS +45', 'pick', 2); }
+        S.health = Math.min(100, S.health + 30); toast('HULL +30', 'pick', 2);
         chime();
-        burst(p.x, 1, p.z, u.kind === 'repair' ? PM.spark : PM.nitro, 12, 4, 5, 0.6);
+        burst(p.x, 1, p.z, PM.spark, 12, 4, 5, 0.6);
         removeEnt(i);
       }
     }
@@ -1525,8 +2383,9 @@ function update(dt) {
 
   for (const fl of flickers) {
     fl.t -= dt;
-    if (fl.t <= 0) { fl.t = Math.random() < 0.7 ? rand(0.03, 0.12) : rand(0.5, 2.5); const on = Math.random() < 0.6; fl.head.material.color.setHex(on ? 0xffc061 : 0x3a3428); fl.pool.visible = on; }
+    if (fl.t <= 0) { fl.t = Math.random() < 0.7 ? rand(0.03, 0.12) : rand(0.5, 2.5); const on = Math.random() < 0.6; fl.head.material.color.setHex(on ? 0xffd08a : 0x3a3428); fl.pool.visible = fl.halo.visible = fl.lamp.on = on; }
   }
+  updateLightPool();
   ground.position.set(cx, -0.02, cz);
   moon.position.set(cx - 90, 95, cz - 330);
   moon.lookAt(cx, 20, cz);
@@ -1536,6 +2395,7 @@ function update(dt) {
   camH += angDiff(H, camH) * Math.min(1, dt * 4);
   const view = VIEWS[viewI];
   cockpit.visible = !!view.cockpit && S.state !== 'menu';
+  for (const b of beams) b.visible = !cockpit.visible;
   if (view.cockpit && S.state !== 'menu') {
     car.updateMatrixWorld(true);
     tmp.set(-0.4, 1.25, 0.06); body.localToWorld(tmp);
@@ -1543,7 +2403,7 @@ function update(dt) {
     if (S.shake > 0 && !reduceMotion) camera.position.y += rand(-1, 1) * S.shake * 0.06;
     S.shake = Math.max(0, S.shake - dt * 2.5);
     camera.rotation.set(car.rotation.x + body.rotation.x - CAM.pitch, H + CAM.yaw, body.rotation.z * 0.6);
-    const fovT = 74 + (Math.max(0, S.speed) / 56) * 6 + (boost ? 10 : 0);
+    const fovT = 74 + (Math.max(0, S.speed) / 56) * 6;
     camera.fov += (fovT - camera.fov) * Math.min(1, dt * 4);
     camera.updateProjectionMatrix();
     camPos.copy(camera.position);
@@ -1568,7 +2428,7 @@ function update(dt) {
     const ahead = 8 * Math.max(0, Math.cos(CAM.yaw)) * (1 - pitch / 1.6);
     look.set(cx - Math.sin(camH) * ahead, S.y * 0.6 + 1.1, cz - Math.cos(camH) * ahead);
     camera.lookAt(look);
-    const fovT = 64 + spd * 8 + (boost ? 14 : 0);
+    const fovT = 64 + spd * 8;
     camera.fov += (fovT - camera.fov) * Math.min(1, dt * 4);
     camera.updateProjectionMatrix();
   }
@@ -1579,19 +2439,19 @@ function update(dt) {
     let vol = S.muted || S.state === 'menu' || S.state === 'over' ? 0 : (S.state === 'dying' ? 0.02 : (throttle ? 0.065 : 0.04));
     if (S.rpm > 0.97 && throttle && (clock * 28) % 1 < 0.45) vol *= 0.35; // rev limiter stutter
     engGain.gain.setTargetAtTime(vol, t, 0.03);
-    const f = 30 + S.rpm * 165 + (boost ? 20 : 0);
+    const f = 30 + S.rpm * 165;
     eng.frequency.setTargetAtTime(f, t, 0.04);
     eng2.frequency.setTargetAtTime(f / 2, t, 0.04);
-    engFilt.frequency.setTargetAtTime(250 + S.rpm * 2000 + (boost ? 500 : 0), t, 0.08);
+    engFilt.frequency.setTargetAtTime(250 + S.rpm * 2000, t, 0.08);
   }
   if (S.state !== 'menu') updateHUD();
 }
-function groundY() { return Math.abs(S.d) > ROAD_HALF + 0.1 ? CURB_Y : 0; }
+function groundY() { return Math.abs(S.d) > halfAt(S.s) + 0.1 ? CURB_Y : 0; }
 
-function killZombie(e, fx, fz, lx, byPlayer, hitSpeed) {
+function killZombie(e, fx, fz, lx, byPlayer, hitSpeed, blast) {
   const u = e.userData;
   u.alive = false;
-  const sp = Math.max(Math.abs(byPlayer ? S.speed : hitSpeed), 10);
+  const sp = blast ? 30 : Math.max(Math.abs(byPlayer ? S.speed : hitSpeed), 10);
   u.vel.set(fx * sp * 0.75 + Math.sign(lx || 1) * rand(1, 5), 6 + sp * 0.16, fz * sp * 0.75 + rand(-2, 2));
   u.spin.set(rand(-12, 12), 0, rand(-12, 12));
   u.legL.rotation.x = 0.8; u.legR.rotation.x = -0.6; u.armL.rotation.x = -2.6; u.armR.rotation.x = 0.4;
@@ -1599,15 +2459,122 @@ function killZombie(e, fx, fz, lx, byPlayer, hitSpeed) {
   burst(e.position.x, 1.2, e.position.z, PM.ichor, u.brute ? 8 : 4, 3, 6, 1.0);
   if (!byPlayer) { thud(0.25, 260, 0.2); return; }
   S.kills++;
+  chargeFire(u.brute ? FIRE_PER_KILL * 2 : FIRE_PER_KILL);
   const pts = (u.brute ? 300 : 100) * S.combo;
   S.score += pts;
   S.combo = Math.min(10, S.combo + 1);
   S.comboT = 3.5;
-  S.nitro = Math.min(100, S.nitro + (u.brute ? 15 : 6));
-  S.speed *= u.brute ? 0.8 : 0.97;
+  if (!blast && S.fireT <= 0) S.speed *= u.brute ? 0.8 : 0.97;
   S.shake = Math.min(1, S.shake + (u.brute ? 0.5 : 0.18));
   thud(u.brute ? 0.8 : 0.45, u.brute ? 160 : 260, 0.22);
   toast((u.brute ? 'BRUTE DOWN' : S.combo > 3 ? 'CHAIN' : 'ROADKILL') + ' +' + pts, 'kill', 1);
+}
+
+/* ---------- special ability: Hellfire ----------
+   Charged by flattening zombies (a brute counts double). Setting it off sends a shockwave
+   that blows away everything near the car, then the car burns for a few seconds: it takes
+   no damage and wrecks anything it touches. */
+const FIRE_TIME = 7, FIRE_PER_KILL = 17, BLAST_R = 26;
+const fireGroup = new THREE.Group(); body.add(fireGroup); fireGroup.visible = false;
+const fGeo = new THREE.ConeGeometry(1, 1, 7, 1, true); fGeo.translate(0, 0.5, 0);
+const fMatO = new THREE.MeshBasicMaterial({ color: 0xff4a0c, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+const fMatY = new THREE.MeshBasicMaterial({ color: 0xffc23a, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+const flames = [];
+{
+  const spots = [];
+  for (const z of [-1.7, -0.9, -0.1, 0.7, 1.5]) for (const x of [-0.85, 0.85]) spots.push([x, 0.9, z, 0.3, 1.3]);
+  for (const z of [-0.2, 0.5, 1.1]) for (const x of [-0.5, 0.5]) spots.push([x, 1.48, z, 0.32, 1.7]);
+  for (const [x, z] of [[1.02, -1.4], [-1.02, -1.4], [1.02, 1.4], [-1.02, 1.4]]) spots.push([x, 0.55, z, 0.36, 1.1]);
+  spots.push([0, 0.9, -1.9, 0.34, 1.2], [0.5, 0.75, 2.2, 0.3, 1.4], [-0.5, 0.75, 2.2, 0.3, 1.4]);
+  for (const [x, y, z, r, h] of spots) {
+    const o = new THREE.Mesh(fGeo, fMatO); o.position.set(x, y, z); fireGroup.add(o);
+    const i = new THREE.Mesh(fGeo, fMatY); i.position.set(x, y + 0.02, z); fireGroup.add(i);
+    flames.push({ m: o, r, h, ph: Math.random() * 6 }, { m: i, r: r * 0.5, h: h * 0.6, ph: Math.random() * 6 });
+  }
+}
+const fireLight = new THREE.PointLight(0xff6a1a, 0, 18, 1.4); fireLight.position.set(0, 1.8, 0.3); car.add(fireLight);
+const shockRing = new THREE.Mesh(new THREE.RingGeometry(0.8, 1, 64).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xff7a22, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+const shockDome = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xff5a10, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+shockRing.visible = shockDome.visible = false; scene.add(shockRing, shockDome);
+let shockT = 9;
+PM.ember = new THREE.MeshBasicMaterial({ color: 0xff8a1f });
+PM.fire = new THREE.MeshBasicMaterial({ color: 0xffc23a });
+
+function chargeFire(amount) {
+  if (S.fireT > 0 || S.fire >= 100) return;
+  S.fire = Math.min(100, S.fire + amount);
+  if (S.fire >= 100) {
+    chime(1.25);
+    toast('HELLFIRE READY · ' + (touchMode ? 'HIT FIRE' : gpConnected ? 'PRESS ' + gpName(cfg.gp.special) : 'PRESS ' + keyName(cfg.keys.special)), 'kill', 3);
+  }
+}
+function triggerSpecial() {
+  if (S.state !== 'play' || S.fireT > 0) return;
+  if (S.fire < 100) { toast('HELLFIRE ' + (S.fire | 0) + '% · FLATTEN MORE ZOMBIES', 'hurt', 1); thud(0.15, 900, 0.08); return; }
+  S.fire = 0; S.fireT = FIRE_TIME;
+  shockT = 0; shockRing.visible = shockDome.visible = true;
+  S.shake = 1;
+  thud(1, 70, 1.1); thud(0.6, 400, 0.4);
+  toast('HELLFIRE · ' + FIRE_TIME + 's', 'kill', 4);
+  worldAt(S.s, S.d, W);
+  burst(W.x, 1, W.z, PM.fire, 30, 14, 9, 0.8);
+  burst(W.x, 1, W.z, PM.ember, 24, 9, 6, 1.1, true, 1.2);
+  // the blast: zombies and traffic nearby are thrown clear
+  for (const e of ents) {
+    const u = e.userData;
+    if (u.type !== 'zombie' || !u.alive) continue;
+    const dS = u.s - S.s, dD = u.d - S.d, dist = Math.hypot(dS, dD);
+    if (dist < BLAST_R) { const th = W.th; killZombie(e, -Math.sin(th) * Math.sign(dS || 1), -Math.cos(th) * Math.sign(dS || 1), dD, true, 0, true); }
+  }
+  for (const t of traffic) if (!t.dead && Math.hypot(t.s - S.s, t.d - S.d) < BLAST_R * 0.85) wreckTraffic(t, 1.3);
+}
+function wreckTraffic(t, power = 1) {
+  if (t.dead) return;
+  t.dead = true; t.deadT = 0;
+  const p = t.g.position, away = tmp.set(p.x - car.position.x, 0, p.z - car.position.z);
+  if (away.lengthSq() < 0.01) away.set(0, 0, -1);
+  away.normalize();
+  t.vel = new THREE.Vector3(away.x * rand(10, 18) * power, rand(9, 15) * power, away.z * rand(10, 18) * power);
+  t.spin = new THREE.Vector3(rand(-5, 5), rand(-3, 3), rand(-6, 6));
+  t.bl.visible = t.br.visible = false;
+  burst(p.x, 1.2, p.z, PM.fire, 18, 8, 8, 0.7);
+  burst(p.x, 1.2, p.z, PM.spark, 14, 7, 7, 0.6);
+  burst(p.x, 1.4, p.z, PM.smoke, 5, 1.5, 2, 1.8, true, 2.4);
+  thud(0.75, 180, 0.4);
+  if (S.state === 'play') {
+    const pts = (t.kind === 'truck' ? 500 : 250) * S.combo;
+    S.score += pts;
+    toast('WRECKED +' + pts, 'kill', 1);
+  }
+}
+function updateFire(dt, cx, cz, fx, fz) {
+  const on = S.fireT > 0;
+  if (on) {
+    S.fireT -= dt;
+    if (S.fireT <= 0) { S.fireT = 0; if (S.state === 'play') toast('HELLFIRE OUT', 'hurt', 1); }
+  }
+  fireGroup.visible = on;
+  fireLight.intensity = on ? 2.4 + Math.random() * 1.2 : 0;
+  paint.emissive.setRGB(on ? 0.32 + Math.random() * 0.08 : 0, on ? 0.06 : 0, 0);
+  if (on) {
+    const lean = 0.2 + Math.min(1.15, Math.max(0, S.speed) / 40), fade = Math.min(1, S.fireT / 0.6);
+    for (const f of flames) {
+      const flick = 0.75 + 0.35 * Math.sin(clock * 23 + f.ph) + Math.random() * 0.25;
+      f.m.scale.set(f.r * (0.85 + Math.random() * 0.3) * fade, f.h * flick * (1 + lean * 0.35) * fade, f.r * (0.85 + Math.random() * 0.3) * fade);
+      f.m.rotation.x = lean;
+    }
+    if (Math.random() < 0.8) burst(cx + rand(-1, 1), S.y + 1.2, cz + rand(-1, 1), PM.ember, 1, 1.2, 3.5, 0.7, true, 0.5);
+    if (Math.random() < 0.25) burst(cx - fx * 2.4, S.y + 1.3, cz - fz * 2.4, PM.smoke, 1, 0.4, 1.5, 1.2, true, 1.5);
+  }
+  if (shockT < 0.9) {
+    shockT += dt;
+    const k = Math.min(1, shockT / 0.9), e = 1 - Math.pow(1 - k, 3);
+    shockRing.position.set(cx, S.y + 0.4, cz); shockRing.scale.setScalar(1 + e * BLAST_R);
+    shockRing.material.opacity = 0.95 * (1 - k);
+    shockDome.position.set(cx, 0, cz); shockDome.scale.set(1 + e * BLAST_R * 0.8, 1 + e * 9, 1 + e * BLAST_R * 0.8);
+    shockDome.material.opacity = 0.35 * (1 - k);
+    if (k >= 1) shockRing.visible = shockDome.visible = false;
+  }
 }
 
 function frame(now) {
@@ -1615,6 +2582,7 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
   pollGamepad();
+  tickTouch(dt);
   if (S.state !== 'paused') update(dt);
   renderer.render(scene, camera);
 }
