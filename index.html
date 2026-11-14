@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Dead Mile Racer: a 3D zombie street racer that runs in your browser. Manual 5-speed gearbox, jumps, traffic, tunnels, Hellfire and a cockpit view.">
+<meta name="description" content="Dead Mile Racer: a 3D zombie street racer that runs in your browser. Manual 5-speed gearbox, traffic, tunnels, Hellfire and a cockpit view.">
 <meta name="theme-color" content="#0a100f">
 <meta property="og:title" content="Dead Mile Racer">
 <meta property="og:description" content="A 3D zombie street racer that runs in your browser.">
@@ -113,9 +113,9 @@ button.ghost { font-family: var(--hud); font-weight: 700; font-size: 13px; lette
 .corner:active { border-color: var(--sodium); }
 
 /* touch layouts (Settings → Mobile):
-   slide: hold the left / right side to steer, swipe up / down to shift, double tap to jump
-   wheel: on-screen steering wheel + gear lever + JUMP / FIRE buttons
-   gyro:  tilt to steer, swipe to shift, double tap to jump */
+   slide: hold the left / right side to steer, swipe up / down to shift
+   wheel: on-screen steering wheel + gear lever + FIRE button
+   gyro:  tilt to steer, swipe to shift */
 :root { --wheel: calc(min(40vh, 250px) * var(--ts)); --zw: clamp(78px, 15vw, 150px); }
 @media (orientation: portrait) { :root { --wheel: calc(min(52vw, 240px) * var(--ts)); --zw: clamp(64px, 19vw, 120px); } }
 .pad { position: fixed; inset: 0; display: none; pointer-events: none; }
@@ -125,7 +125,6 @@ button.ghost { font-family: var(--hud); font-weight: 700; font-size: 13px; lette
 .pad .tb, .pad .lever, .pad .wheel { pointer-events: auto; touch-action: none; }
 .pad .tb { width: var(--btn); height: var(--btn); bottom: calc(var(--sb) + 16px); border-radius: 50%; border: 2px solid var(--line); background: rgba(9,14,13,.55); color: var(--fg); font-family: var(--hud); font-weight: 700; font-size: calc(13px * var(--ts)); letter-spacing: .08em; place-items: center; padding: 0; }
 .pad .tb.down { background: rgba(255,179,64,.3); border-color: var(--sodium); }
-.pad .tb.jump { border-color: var(--sodium); color: var(--sodium); }
 .pad .tb.special { --fill: 0; color: #ffb36b; border-color: rgba(255,120,40,.55); background: conic-gradient(rgba(255,100,20,.5) calc(var(--fill) * 1%), rgba(9,14,13,.55) 0); }
 .pad .tb.special.ready, .pad .tb.special.active { color: #ffe08a; border-color: #ff8a1f; animation: fireglow .6s infinite alternate; }
 @keyframes fireglow { from { box-shadow: 0 0 0 0 rgba(255,110,20,.5); } to { box-shadow: 0 0 22px 6px rgba(255,110,20,.65); } }
@@ -135,15 +134,12 @@ button.ghost { font-family: var(--hud); font-weight: 700; font-size: 13px; lette
 .pad .zone.on { border-color: var(--sodium); background: rgba(255,179,64,.12); color: var(--sodium); }
 .pad .zl { left: max(10px, env(safe-area-inset-left, 0px)); }
 .pad .zr { right: max(10px, env(safe-area-inset-right, 0px)); }
-.pad.m-slide .jump { left: calc(max(10px, env(safe-area-inset-left, 0px)) + var(--zw) + 14px); }
 .pad.m-slide .special { right: calc(max(10px, env(safe-area-inset-right, 0px)) + var(--zw) + 14px); }
 @media (orientation: portrait) {
   .pad .zone { top: 30%; bottom: calc(var(--sb) + 30px + var(--btn)); }
-  .pad.m-slide .jump { left: max(16px, env(safe-area-inset-left, 0px)); }
   .pad.m-slide .special { right: max(16px, env(safe-area-inset-right, 0px)); }
 }
 /* gyro */
-.pad.m-gyro .jump { left: max(16px, env(safe-area-inset-left, 0px)); }
 .pad.m-gyro .special { right: max(16px, env(safe-area-inset-right, 0px)); }
 .pad .tilt { left: 50%; bottom: calc(var(--sb) + 22px); width: min(170px, 40vw); height: 26px; transform: translateX(-50%); border: 1px solid var(--line); border-radius: 13px; background: rgba(9,14,13,.45); place-items: center; font-size: 10px; letter-spacing: .2em; color: var(--muted); font-weight: 700; }
 .pad .tilt i { position: absolute; top: 3px; bottom: 3px; left: 50%; width: 18px; margin-left: -9px; border-radius: 9px; background: var(--sodium); opacity: .85; }
@@ -156,8 +152,7 @@ button.ghost { font-family: var(--hud); font-weight: 700; font-size: 13px; lette
 .pad .wheel .mark { fill: var(--sodium); }
 .pad .wheel.on .rim { stroke: var(--sodium); }
 .pad.m-wheel .tb { width: calc(var(--btn) * .82); height: calc(var(--btn) * .82); font-size: calc(11px * var(--ts)); }
-.pad.m-wheel .jump { left: max(16px, env(safe-area-inset-left, 0px)); }
-.pad.m-wheel .special { left: calc(max(16px, env(safe-area-inset-left, 0px)) + var(--btn) * .82 + 10px); }
+.pad.m-wheel .special { left: max(16px, env(safe-area-inset-left, 0px)); }
 .pad .lever { left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(var(--sb) + 28px + var(--btn) * .82); width: calc(var(--btn) * .8); height: calc(var(--btn) * 1.9); border-radius: 16px; border: 2px solid var(--line); background: rgba(9,14,13,.5); grid-template-rows: auto 1fr auto; justify-items: center; padding: 6px 0; color: var(--muted); font-size: 13px; }
 .pad .lever .lv-slot { width: 6px; border-radius: 3px; background: rgba(0,0,0,.6); }
 .pad .lever .lv-knob { position: absolute; left: 50%; top: 50%; width: 62%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #4d5250, #111413); border: 2px solid var(--sodium); }
@@ -198,6 +193,9 @@ body { touch-action: manipulation; }
 .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); }
 .seg button { font-family: var(--hud); font-weight: 700; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; background: transparent; color: var(--muted); border: 0; padding: 9px 12px; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--sodium); color: #1a1206; }
+.rng { display: inline-flex; align-items: center; gap: 10px; min-height: 38px; }
+.rng input { width: 170px; accent-color: var(--sodium); }
+.rng output { font-family: var(--hud); font-weight: 700; font-size: 14px; min-width: 2ch; color: var(--fg); }
 .seg button:focus-visible { outline: 2px solid var(--nitro); outline-offset: 2px; }
 .maprows { display: grid; gap: 6px; }
 .maprow { display: grid; grid-template-columns: 1fr auto 86px; align-items: center; gap: 12px; font-size: 14px; padding: 6px 0; border-bottom: 1px solid rgba(232,236,223,.06); }
@@ -319,7 +317,6 @@ kbd.wait { color: var(--sodium); border-color: var(--sodium); animation: pulse .
   <div class="lever s-wheel" id="tLever" role="slider" aria-label="Gear lever: push up to shift up, pull down to shift down"><b>GEAR</b><span class="lv-u">▲</span><i class="lv-slot"></i><span class="lv-d">▼</span><i class="lv-knob" id="leverKnob"></i></div>
   <div class="wheel s-wheel" id="tWheel" aria-label="Steering wheel: turn to steer"><svg viewBox="-50 -50 100 100" aria-hidden="true"><circle class="rim" r="43"/><path class="spoke" d="M-40 6 L-13 4 M40 6 L13 4 M0 14 L0 39"/><circle class="hub" r="13"/><rect class="mark" x="-3.5" y="-48" width="7" height="10" rx="2"/></svg></div>
   <div class="tilt s-gyro" id="tTilt" aria-hidden="true"><i id="tiltNeedle"></i><span>TILT</span></div>
-  <button type="button" id="tJump" class="tb jump s-all">JUMP</button>
   <button type="button" id="tSpecial" class="tb special s-all" aria-label="Hellfire special ability">FIRE</button>
 </div>
 <div id="tapFx"></div>
@@ -327,20 +324,15 @@ kbd.wait { color: var(--sodium); border-color: var(--sodium); animation: pulse .
 <div id="rotate" role="alert">
   <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="15" y="5" width="18" height="38" rx="3"/><path d="M21 38h6"/></svg>
   <p><b>TURN YOUR PHONE</b>Dead Mile is set to landscape. Rotate your device sideways to drive.</p>
-  <button class="ghost" id="rotateAny" type="button">Play in portrait instead</button>
+  <button class="ghost" id="rotateAny" type="button">Allow any orientation</button>
 </div>
 
 <div class="screen" id="menu">
   <div class="card">
-    <span class="kicker">Route 9 · 02:40 AM · Sector quarantined</span>
     <h1>DEAD<br><span>MILE</span></h1>
-    <p class="lede">The city fell at midnight, but the night traffic still runs. The road swells from two lanes to four and back, dives through tunnels and under overbridges. Flatten shamblers to charge <b style="color:var(--sodium)">Hellfire</b>, then set the car ablaze and wreck everything in your path.</p>
-    <div class="keys" id="menuKeys"></div>
-    <p class="note k-desk">The car accelerates by itself. <b>Manual:</b> each gear (R · N · 1–5) has a top speed, so shift up when the gear number flashes and shift down to slow; N rolls to a stop and R needs you stopped. <b>Automatic:</b> gears change for you; hold gear-down to brake, keep holding at a stop to reverse.</p>
     <div class="row">
       <button class="go" id="startBtn" type="button">START ENGINE</button>
       <button class="ghost" id="menuSettingsBtn" type="button">Settings</button>
-      <span class="best">Best run <b id="bestMenu">0</b></span>
     </div>
   </div>
 </div>
@@ -372,7 +364,8 @@ kbd.wait { color: var(--sodium); border-color: var(--sodium); animation: pulse .
     <div class="quick">
       <div class="qset"><span class="label">Sound</span><span class="seg" data-set="sound" role="group" aria-label="Sound"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></span></div>
       <div class="qset"><span class="label">Transmission</span><span class="seg" data-set="trans" role="group" aria-label="Transmission"><button type="button" data-v="auto">Auto</button><button type="button" data-v="manual">Manual</button></span></div>
-      <div class="qset"><span class="label">Screen</span><span class="seg" data-set="orient" role="group" aria-label="Screen"><button type="button" data-v="landscape">Landscape</button><button type="button" data-v="portrait">Portrait</button></span></div>
+      <div class="qset"><span class="label">Screen</span><span class="seg" data-set="orient" role="group" aria-label="Screen"><button type="button" data-v="auto">Auto</button><button type="button" data-v="landscape">Landscape</button><button type="button" data-v="portrait">Portrait</button></span></div>
+      <div class="qset"><label class="label" for="steerSens">Steering sensitivity</label><span class="rng"><input type="range" id="steerSens" data-num="steerSens" min="1" max="10" step="1"><output id="steerSensV"></output></span></div>
     </div>
     <div class="tabs" role="tablist" aria-label="Controls">
       <button type="button" role="tab" data-tab="desktop" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h1M10 10h1M14 10h1M18 10h1M7 14h10"/></svg>Desktop</button>
@@ -393,7 +386,7 @@ kbd.wait { color: var(--sodium); border-color: var(--sodium); animation: pulse .
       <div class="mockwrap" id="mockWrap"><div class="mock" id="mock" role="img" aria-label="Phone screen showing the chosen touch controls"></div><ul class="mockdesc" id="mockDesc"></ul></div>
       <div class="setrow" id="gyroRow"><span class="label" id="gyroStatus">Tilt: hold the phone the way you drive</span><button class="ghost" id="gyroCenter" type="button">Re-center tilt</button></div>
       <div class="setrow"><span class="label">Control size</span><span class="seg" data-set="size" role="group" aria-label="Control size"><button type="button" data-v="s">Small</button><button type="button" data-v="m">Medium</button><button type="button" data-v="l">Large</button></span></div>
-      <div class="setrow"><span class="label">Steering</span><span class="seg" data-set="sens" role="group" aria-label="Steering"><button type="button" data-v="low">Gentle</button><button type="button" data-v="mid">Normal</button><button type="button" data-v="high">Sharp</button></span></div>
+      <div class="setrow"><label class="label" for="gyroSens">Gyro sensitivity</label><span class="rng"><input type="range" id="gyroSens" data-num="gyroSens" min="1" max="10" step="1"><output id="gyroSensV"></output></span></div>
     </div>
     <div class="tabpane" data-tab="gamepad" hidden>
       <p class="note" id="gpStatus">No gamepad detected. Connect one and press any button.</p>
@@ -1209,8 +1202,8 @@ const GEARS = [
   { n: '1', max: 15, acc: 24 },
   { n: '2', max: 26, acc: 20 },
   { n: '3', max: 37, acc: 16 },
-  { n: '4', max: 48, acc: 13 },
-  { n: '5', max: 59, acc: 10.5 },
+  { n: '4', max: 50, acc: 13 },
+  { n: '5', max: 66, acc: 10.5 },
 ];
 function setGear(g) { S.gear = g; S.shiftT = 0.16; thud(0.16, 1100, 0.07); }
 function shiftGear(dir) {
@@ -1307,10 +1300,10 @@ function updateHUD() {
 /* ---------- settings (saved in the browser) ---------- */
 const ACTIONS = [
   ['gearUp', 'Gear up'], ['gearDown', 'Gear down'], ['left', 'Steer left'], ['right', 'Steer right'],
-  ['jump', 'Jump'], ['special', 'Special: Hellfire'], ['camera', 'Camera angle'],
+  ['special', 'Special: Hellfire'], ['camera', 'Camera angle'],
 ];
-const KEY_DEFAULT = { gearUp: 'ArrowUp', gearDown: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight', jump: 'Space', special: 'ControlLeft', camera: 'KeyC' };
-const GP_DEFAULT = { gearUp: 0, gearDown: 1, left: 14, right: 15, jump: 2, special: 3, camera: 4 };
+const KEY_DEFAULT = { gearUp: 'ArrowUp', gearDown: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight', special: 'ControlLeft', camera: 'KeyC' };
+const GP_DEFAULT = { gearUp: 0, gearDown: 1, left: 14, right: 15, special: 3, camera: 4 };
 const GP_PAUSE = 9;   // Start: fixed
 const GP_STICK = 10;  // the left stick (L3) always steers
 const GP_NAMES = {
@@ -1331,38 +1324,45 @@ function keyName(code) {
   if ((m = /^Numpad(.+)$/.exec(code))) return 'Num ' + m[1];
   return code;
 }
-const CFG_OK = { trans: ['auto', 'manual'], sound: ['on', 'off'], orient: ['landscape', 'portrait'], touch: ['slide', 'wheel', 'gyro'], size: ['s', 'm', 'l'], sens: ['low', 'mid', 'high'] };
+const CFG_OK = { trans: ['auto', 'manual'], sound: ['on', 'off'], orient: ['auto', 'landscape', 'portrait'], touch: ['slide', 'wheel', 'gyro'], size: ['s', 'm', 'l'] };
+const NUM_OK = { steerSens: [1, 10], gyroSens: [1, 10] };   // 1 = calm … 10 = twitchy
 const cfg = {
-  trans: isTouch ? 'auto' : 'manual', sound: 'on', orient: 'landscape',
-  touch: 'slide', size: 'm', sens: 'mid',
+  trans: isTouch ? 'auto' : 'manual', sound: 'on', orient: 'auto',
+  touch: 'slide', size: 'm', steerSens: 4, gyroSens: 4,
   keys: Object.assign({}, KEY_DEFAULT), gp: Object.assign({}, GP_DEFAULT),
 };
-const CFG_KEY = 'deadmile.settings.v2';
+const CFG_KEY = 'deadmile.settings.v3';
 try {
-  const saved = JSON.parse(localStorage.getItem(CFG_KEY) || 'null');
+  let saved = JSON.parse(localStorage.getItem(CFG_KEY) || 'null');
+  if (!saved) {   // v2 always stored 'landscape' as the default; let those players rotate freely now
+    saved = JSON.parse(localStorage.getItem('deadmile.settings.v2') || 'null');
+    if (saved && saved.orient === 'landscape') saved.orient = 'auto';
+  }
   const old = saved ? null : JSON.parse(localStorage.getItem('deadmile.settings') || 'null');
   const src = saved || old;
   if (src && typeof src === 'object') {
-    if (old && old.orient === 'any') src.orient = 'portrait';
+    if (old && old.orient === 'any') src.orient = 'auto';
     for (const k in CFG_OK) if (CFG_OK[k].includes(src[k])) cfg[k] = src[k];
+    for (const k in NUM_OK) { const v = Math.round(+src[k]); if (v >= NUM_OK[k][0] && v <= NUM_OK[k][1]) cfg[k] = v; }
     if (saved && saved.keys) for (const k in KEY_DEFAULT) if (typeof saved.keys[k] === 'string' && saved.keys[k] !== 'Escape') cfg.keys[k] = saved.keys[k];
     if (saved && saved.gp) for (const k in GP_DEFAULT) if (Number.isInteger(saved.gp[k]) && saved.gp[k] !== GP_PAUSE) cfg.gp[k] = saved.gp[k];
   }
 } catch (_) {}
 function saveCfg() { try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (_) {} }
 const SIZE = { s: 0.85, m: 1, l: 1.18 };
-const SENS = { low: 0.6, mid: 0.82, high: 1 };            // touch slide: steering lock
-const WHEEL_LOCK = { low: 125, mid: 95, high: 65 };       // wheel: degrees for full lock
-const TILT_LOCK = { low: 0.62, mid: 0.44, high: 0.3 };    // gyro: radians of tilt for full lock
+// sensitivity sliders (1..10) -> steering feel
+const steerGain = () => 0.35 + cfg.steerSens * 0.065;      // keys / gamepad / touch slide: share of full lock (4 -> 0.61, 10 -> 1)
+const steerRate = () => 2.5 + cfg.steerSens * 0.55;        // how fast the wheel follows the input (4 -> 4.7, 10 -> 8)
+const wheelLock = () => 165 - cfg.steerSens * 10;           // on-screen wheel: degrees for full lock (4 -> 125, 10 -> 65)
+const tiltLock = () => 1.0 - cfg.gyroSens * 0.07;           // gyro: radians of tilt for full lock (4 -> 0.72 = 41°, 10 -> 0.3)
 
 /* ---------- screens ---------- */
 function show(id, on) { $(id).hidden = !on; }
-$('bestMenu').textContent = S.best.toLocaleString();
 let hintTimer = 0, settingsFromMenu = false;
 const TOUCH_HINT = {
-  slide: 'Hold left / right side to steer · swipe ▲ ▼ to shift · double tap to jump',
+  slide: 'Hold left / right side to steer · swipe ▲ ▼ to shift',
   wheel: 'Turn the wheel to steer · push the lever to shift · FIRE once Hellfire is charged',
-  gyro: 'Tilt to steer · swipe ▲ ▼ to shift · double tap to jump',
+  gyro: 'Tilt to steer · swipe ▲ ▼ to shift',
 };
 function startGame() {
   initAudio();
@@ -1415,7 +1415,6 @@ function toMenu() {
   reset(); S.state = 'menu';
   show('paused', false); show('over', false); show('hud', false); show('topbtns', false); $('hint').hidden = true;
   $('pad').classList.remove('live');
-  $('bestMenu').textContent = S.best.toLocaleString();
   show('menu', true);
 }
 function setView(i) {
@@ -1450,10 +1449,10 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 // Android Chrome can lock orientation, but only in fullscreen and only from a tap.
 // iOS Safari can't do either, so in landscape mode the #rotate screen asks the player to turn the phone.
 function goOrient() {
-  const want = cfg.orient === 'portrait' ? 'portrait' : 'landscape';
+  const want = cfg.orient;
   const de = document.documentElement;
   const req = de.requestFullscreen || de.webkitRequestFullscreen;
-  const lock = () => { try { const p = screen.orientation && screen.orientation.lock && screen.orientation.lock(want); if (p && p.catch) p.catch(() => {}); } catch (_) {} };
+  const lock = () => { try { const so = screen.orientation; if (want === 'auto') { if (so && so.unlock) so.unlock(); return; } const p = so && so.lock && so.lock(want); if (p && p.catch) p.catch(() => {}); } catch (_) {} };
   if (req && !(document.fullscreenElement || document.webkitFullscreenElement)) {
     try { const p = req.call(de, { navigationUI: 'hide' }); if (p && p.then) p.then(lock, () => {}); else lock(); } catch (_) {}
   } else lock();
@@ -1466,7 +1465,7 @@ const onOrient = () => {
 if (portraitMQ.addEventListener) portraitMQ.addEventListener('change', onOrient); else if (portraitMQ.addListener) portraitMQ.addListener(onOrient);
 addEventListener('resize', () => { if (settingsOpen() && curTab === 'gamepad') drawGpLines(); });
 $('rotate').addEventListener('click', goOrient);
-$('rotateAny').addEventListener('click', e => { e.stopPropagation(); setSetting('orient', 'portrait'); });
+$('rotateAny').addEventListener('click', e => { e.stopPropagation(); setSetting('orient', 'auto'); });
 
 /* ---------- applying settings ---------- */
 function setAuto(on) { setSetting('trans', on ? 'auto' : 'manual'); }
@@ -1481,7 +1480,7 @@ function applySettings() {
   S.muted = cfg.sound === 'off';
   const b = document.body.classList;
   b.toggle('manual', !S.auto);
-  b.toggle('any-orient', cfg.orient === 'portrait');
+  b.toggle('any-orient', cfg.orient !== 'landscape');
   for (const m of CFG_OK.touch) b.toggle('tm-' + m, cfg.touch === m);
   const pad = $('pad');
   for (const m of CFG_OK.touch) pad.classList.toggle('m-' + m, cfg.touch === m);
@@ -1489,11 +1488,13 @@ function applySettings() {
   document.querySelectorAll('.seg[data-set]').forEach(seg => {
     seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(cfg[seg.dataset.set] === x.dataset.v)));
   });
-  renderKbRows(); renderGp(); renderMock(); renderMenuKeys();
+  document.querySelectorAll('input[data-num]').forEach(x => { x.value = cfg[x.dataset.num]; $(x.id + 'V').textContent = cfg[x.dataset.num]; });
+  renderKbRows(); renderGp(); renderMock();
   hudLast = '';
 }
 document.querySelectorAll('.seg[data-set] button').forEach(x => x.addEventListener('click', () => setSetting(x.closest('.seg').dataset.set, x.dataset.v)));
-refreshInputUI = () => { hudLast = ''; renderMenuKeys(); };
+document.querySelectorAll('input[data-num]').forEach(x => x.addEventListener('input', () => { cfg[x.dataset.num] = +x.value; saveCfg(); applySettings(); }));
+refreshInputUI = () => { hudLast = ''; };
 
 /* ---------- remapping: keyboard and gamepad ---------- */
 let capKey = null, capGp = null;
@@ -1516,17 +1517,17 @@ function assignKey(act, code) {
   const other = Object.keys(cfg.keys).find(k => k !== act && cfg.keys[k] === code);
   if (other) cfg.keys[other] = cfg.keys[act];      // swap so no two actions share a key
   cfg.keys[act] = code; capKey = null;
-  saveCfg(); renderKbRows(); renderMenuKeys(); hudLast = '';
+  saveCfg(); renderKbRows(); hudLast = '';
 }
-$('kbReset').addEventListener('click', () => { cfg.keys = Object.assign({}, KEY_DEFAULT); capKey = null; saveCfg(); renderKbRows(); renderMenuKeys(); });
+$('kbReset').addEventListener('click', () => { cfg.keys = Object.assign({}, KEY_DEFAULT); capKey = null; saveCfg(); renderKbRows(); });
 
 function assignGp(act, idx) {
   const other = Object.keys(cfg.gp).find(k => k !== act && cfg.gp[k] === idx);
   if (other) cfg.gp[other] = cfg.gp[act];
   cfg.gp[act] = idx; capGp = null;
-  saveCfg(); renderGp(); renderMenuKeys();
+  saveCfg(); renderGp();
 }
-$('gpReset').addEventListener('click', () => { cfg.gp = Object.assign({}, GP_DEFAULT); capGp = null; saveCfg(); renderGp(); renderMenuKeys(); });
+$('gpReset').addEventListener('click', () => { cfg.gp = Object.assign({}, GP_DEFAULT); capGp = null; saveCfg(); renderGp(); });
 
 /* gamepad diagram: actions listed left and right of the drawing, joined to their buttons by thin lines */
 const gpSvg = $('gpSvg');
@@ -1593,9 +1594,9 @@ function drawGpLines() {
 
 /* phone mockups of each touch layout */
 const MOCK_DESC = {
-  slide: ['<b>Hold the left / right side</b> of the screen to steer', '<b>Swipe up / down</b> anywhere to shift gear (automatic: swipe down and hold to brake)', '<b>Double tap</b> anywhere to jump, or press <b>JUMP</b>', '<b>FIRE</b> sets off Hellfire once it is charged'],
-  wheel: ['<b>Turn the wheel</b> (bottom right) to steer. It springs back when you let go', '<b>Push the GEAR lever</b> up / pull it down to shift (automatic: pull down and hold to brake)', '<b>JUMP</b> and <b>FIRE</b> sit bottom left', 'No screen gestures in this mode, so stray taps do nothing'],
-  gyro: ['<b>Tilt the phone</b> like a steering wheel to steer. Touch steering is off', '<b>Swipe up / down</b> to shift gear (automatic: swipe down and hold to brake)', '<b>Double tap</b> or <b>JUMP</b> to jump · <b>FIRE</b> for Hellfire', 'Hold the phone the way you drive, then <b>Re-center tilt</b>. A run also re-centers when it starts'],
+  slide: ['<b>Hold the left / right side</b> of the screen to steer', '<b>Swipe up / down</b> anywhere to shift gear (automatic: swipe down and hold to brake)', '<b>FIRE</b> sets off Hellfire once it is charged'],
+  wheel: ['<b>Turn the wheel</b> (bottom right) to steer. It springs back when you let go', '<b>Push the GEAR lever</b> up / pull it down to shift (automatic: pull down and hold to brake)', '<b>FIRE</b> sits bottom left', 'No screen gestures in this mode, so stray taps do nothing'],
+  gyro: ['<b>Tilt the phone</b> like a steering wheel to steer. Touch steering is off', '<b>Swipe up / down</b> to shift gear (automatic: swipe down and hold to brake)', '<b>FIRE</b> for Hellfire', 'Hold the phone the way you drive, then <b>Re-center tilt</b>. A run also re-centers when it starts'],
 };
 function phoneSVG(mode, land) {
   const sw = land ? 480 : 220, sh = land ? 222 : 420, bz = 12, pad = mode === 'gyro' ? 40 : 4;
@@ -1633,13 +1634,7 @@ function phoneSVG(mode, land) {
     T(x + 10, y - 7, land ? 'SWIPE ▲ GEAR UP' : '▲ GEAR UP', 9, '#ffb340', 'start'); T(x + 10, y + 7, land ? 'SWIPE ▼ GEAR DOWN' : '▼ GEAR DOWN', 9, '#ffb340', 'start');
     if (!land) T(x + 10, y + 21, 'SWIPE', 8, '#9aa597', 'start');
   };
-  const dtap = (x, y) => {
-    o.push(`<circle cx="${x}" cy="${y}" r="5" fill="#ffb340"/><circle cx="${x}" cy="${y}" r="10" fill="none" stroke="#ffb340" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="15" fill="none" stroke="#ffb340" stroke-width="1" opacity=".6"/>`);
-    T(x + 20, y - (land ? 0 : 6), land ? 'DOUBLE TAP · JUMP' : 'DOUBLE TAP', 9, '#ffb340', 'start');
-    if (!land) T(x + 20, y + 7, '= JUMP', 9, '#ffb340', 'start');
-  };
   const fireBtn = (cx, cy, r) => C(cx, cy, r, 'FIRE', '#ff8a1f', '#ffe08a', 'rgba(255,100,20,.35)');
-  const jumpBtn = (cx, cy, r) => C(cx, cy, r, 'JUMP', '#ffb340', '#ffb340');
   if (mode === 'slide') {
     const zw = land ? sw * 0.15 : sw * 0.19, zt = sh * (land ? 0.34 : 0.3), zb = land ? sh - 6 : sh - 12 - bs;
     for (const [x, a] of [[6, '◀'], [sw - 6 - zw, '▶']]) {
@@ -1648,8 +1643,8 @@ function phoneSVG(mode, land) {
       T(x + zw / 2, (zt + zb) / 2 + 24, a === '◀' ? 'LEFT' : 'RIGHT', 9, '#9aa597');
     }
     const r = bs / 2;
-    if (land) { jumpBtn(6 + zw + 10 + r, sh - 6 - r, r); fireBtn(sw - 6 - zw - 10 - r, sh - 6 - r, r); swipe(vx - 70, sh * 0.52, 50); dtap(vx - 70, sh * 0.86); }
-    else { jumpBtn(8 + r, sh - 6 - r, r); fireBtn(sw - 8 - r, sh - 6 - r, r); swipe(vx - 34, sh * 0.5, 54); dtap(vx - 28, sh * 0.8); }
+    if (land) { fireBtn(sw - 6 - zw - 10 - r, sh - 6 - r, r); swipe(vx - 70, sh * 0.52, 50); }
+    else { fireBtn(sw - 8 - r, sh - 6 - r, r); swipe(vx - 34, sh * 0.5, 54); }
   } else if (mode === 'wheel') {
     const D = land ? sh * 0.42 : sw * 0.52, wx = sw - 6 - D / 2, wy = sh - 6 - D / 2, r = D / 2;
     o.push(`<circle cx="${wx}" cy="${wy}" r="${r}" fill="rgba(9,14,13,.35)"/><g transform="translate(${wx} ${wy}) rotate(-18) scale(${r / 50})"><circle r="43" fill="none" stroke="#ffb340" stroke-width="8"/><path d="M-40 6 L-13 4 M40 6 L13 4 M0 14 L0 39" stroke="rgba(232,236,223,.5)" stroke-width="6" stroke-linecap="round" fill="none"/><circle r="13" fill="rgba(9,14,13,.8)" stroke="rgba(232,236,223,.5)" stroke-width="2"/><rect x="-3.5" y="-48" width="7" height="10" rx="2" fill="#ffb340"/></g>`);
@@ -1660,14 +1655,14 @@ function phoneSVG(mode, land) {
     T(lx + lw / 2, ly + 9, '▲', 9, '#ffb340'); T(lx + lw / 2, ly + lh - 9, '▼', 9, '#9aa597');
     if (land) { T(lx + lw + 8, ly + 14, 'GEAR LEVER', 9, '#ffb340', 'start'); T(lx + lw + 8, ly + 27, 'push ▲ / pull ▼', 8, '#9aa597', 'start', 600); }
     else T(lx, ly - 10, 'GEAR LEVER ▲▼', 9, '#ffb340', 'start');
-    jumpBtn(8 + b2 / 2, sh - 6 - b2 / 2, b2 / 2); fireBtn(8 + b2 * 1.5 + 10, sh - 6 - b2 / 2, b2 / 2);
+    fireBtn(8 + b2 / 2, sh - 6 - b2 / 2, b2 / 2);
   } else {
     const r = bs / 2;
-    jumpBtn(8 + r, sh - 6 - r, r); fireBtn(sw - 8 - r, sh - 6 - r, r);
+    fireBtn(sw - 8 - r, sh - 6 - r, r);
     const tw = Math.min(170, sw * 0.4);
     o.push(`<rect x="${vx - tw / 2}" y="${sh - 34}" width="${tw}" height="22" rx="11" fill="rgba(9,14,13,.6)" stroke="rgba(232,236,223,.3)"/><rect x="${vx + tw * 0.18 - 9}" y="${sh - 31}" width="18" height="16" rx="8" fill="#ffb340"/>`);
     T(vx - tw * 0.12, sh - 23, 'TILT', 8, '#9aa597');
-    if (land) { swipe(vx - 80, sh * 0.5, 50); dtap(vx - 160, sh * 0.72); } else { swipe(vx - 34, sh * 0.48, 54); dtap(vx - 28, sh * 0.8); }
+    if (land) swipe(vx - 80, sh * 0.5, 50); else swipe(vx - 34, sh * 0.48, 54);
     T(vx, hy - 14, 'TOUCH STEERING OFF', 8, '#d4323a');
   }
   const ghosts = mode === 'gyro'
@@ -1684,45 +1679,22 @@ function phoneSVG(mode, land) {
   </svg>`;
 }
 function renderMock() {
-  const land = cfg.orient !== 'portrait';
-  const fig = (l) => `<figure class="${l === land ? 'sel' : ''}">${phoneSVG(cfg.touch, l)}<figcaption>${l ? 'Landscape' : 'Portrait'}${l === land ? ' · selected' : ''}</figcaption></figure>`;
+  const sel = l => cfg.orient === 'auto' || (cfg.orient === 'landscape') === l;
+  const fig = (l) => `<figure class="${sel(l) ? 'sel' : ''}">${phoneSVG(cfg.touch, l)}<figcaption>${l ? 'Landscape' : 'Portrait'}${sel(l) && cfg.orient !== 'auto' ? ' · selected' : ''}</figcaption></figure>`;
   $('mock').innerHTML = fig(true) + fig(false);
   $('mockDesc').innerHTML = MOCK_DESC[cfg.touch].map(t => `<li>${t}</li>`).join('');
   $('gyroRow').hidden = cfg.touch !== 'gyro';
 }
 
-/* start screen: the controls list follows the current bindings and touch mode */
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-const TOUCH_KEYS = {
-  slide: [['Hold ◀ ▶', 'Hold the left / right side of the screen to steer'], ['Swipe ▲ ▼', 'Shift gear (automatic: swipe down and hold to brake)'], ['Double tap', 'Jump, or press JUMP'], ['FIRE', 'Hellfire, once charged by flattening zombies']],
-  wheel: [['Wheel', 'Turn the wheel bottom right to steer'], ['Gear lever', 'Push up / pull down to shift (automatic: pull down and hold to brake)'], ['JUMP · FIRE', 'Bottom left. FIRE sets off Hellfire once charged']],
-  gyro: [['Tilt', 'Tilt the phone like a wheel to steer'], ['Swipe ▲ ▼', 'Shift gear (automatic: swipe down and hold to brake)'], ['Double tap', 'Jump, or press JUMP'], ['FIRE', 'Hellfire, once charged by flattening zombies']],
-};
-function renderMenuKeys() {
-  const k = a => `<kbd>${esc(keyName(cfg.keys[a]))}</kbd>`, g = a => `<kbd>${esc(gpName(cfg.gp[a]))}</kbd>`;
-  const desk = [
-    [`${k('gearUp')} ${k('gearDown')}`, 'Gear up / gear down (automatic: hold gear down to brake)'],
-    [`${k('left')} ${k('right')}`, 'Steer left / right'],
-    [k('jump'), 'Jump'],
-    [k('special'), 'Hellfire: charge it by flattening zombies, then set the car ablaze'],
-    [`${k('camera')}`, 'Camera angle (right-drag to look around)'],
-    ['<kbd>Esc</kbd>', 'Pause menu &amp; settings (remap keys there)'],
-    ['<kbd>Gamepad</kbd>', `${g('gearUp')} / ${g('gearDown')} gears · ${g('left')} ${g('right')} or stick steer · ${g('jump')} jump · ${g('special')} Hellfire · ${g('camera')} camera · <kbd>${esc(gpName(GP_PAUSE))}</kbd> pause`],
-  ];
-  const touch = TOUCH_KEYS[cfg.touch].concat([['MENU', 'Pause &amp; settings: pick Gyro, Steering or Touch slide under Mobile']]);
-  $('menuKeys').innerHTML =
-    desk.map(([a, b]) => `<span class="k-desk">${a}</span><span class="k-desk">${b}</span>`).join('') +
-    `<span class="k-touch">${touch.map(([a, b]) => `<kbd>${a}</kbd><span>${b}</span>`).join('')}</span>`;
-}
 
 /* ---------- input ---------- */
 // Input sources feed the same controls. Held state lives in keys (keyboard), gp (gamepad)
-// and tc (touch); one-shot actions call gearInput / jumpQueued / triggerSpecial.
+// and tc (touch); one-shot actions call gearInput / triggerSpecial.
 //   gear down held -> automatic brake / reverse; gear up / down pressed -> manual shift
 //   steer: -1..1 (positive = left)
 const gp = { down: false, steer: 0 };
 const tc = { down: false, steer: 0 };
-let jumpQueued = false;
 function gearInput(dir) { if (!S.auto) shiftGear(dir); }
 const actOfKey = code => { for (const a in cfg.keys) if (cfg.keys[a] === code) return a; return null; };
 
@@ -1746,7 +1718,6 @@ addEventListener('keydown', e => {
     if (!e.repeat) {
       if (act === 'gearUp') gearInput(1);
       else if (act === 'gearDown') gearInput(-1);
-      else if (act === 'jump') jumpQueued = true;
       else if (act === 'special') triggerSpecial();
       else if (act === 'camera' && S.state !== 'menu') setView(viewI + 1);
     }
@@ -1760,7 +1731,7 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { const a = actOfKey(e.code); if (a && a in keys) keys[a] = false; });
 
-/* touch: JUMP / FIRE buttons (all modes) */
+/* touch: FIRE button (all modes) */
 const btnHeld = { down: false };
 function tapBtn(id, onPress) {
   const b = $(id);
@@ -1773,7 +1744,6 @@ function tapBtn(id, onPress) {
   b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('lostpointercapture', off);
   b.addEventListener('contextmenu', e => e.preventDefault());
 }
-tapBtn('tJump', () => { jumpQueued = true; });
 tapBtn('tSpecial', () => triggerSpecial());
 
 /* touch: steering wheel (wheel mode). Turn it by dragging around its centre; it springs back. */
@@ -1853,10 +1823,9 @@ $('gyroCenter').addEventListener('click', () => startGyro(true));
 const gyroActive = () => touchMode && cfg.touch === 'gyro' && !gyro.fallback;
 
 /* touch: screen gestures. slide mode: hold left / right half to steer; slide + gyro modes:
-   swipe up / down to shift, double tap to jump. Mouse (left button) always acts as slide mode. */
+   swipe up / down to shift. Mouse (left button) always acts as slide mode. */
 const gestures = new Map();
-const SWIPE = 38, SHIFT_STEP = 70, TAP_MS = 260, TAP_MOVE = 16, DOUBLE_MS = 340;
-let lastTap = { t: -1e9, x: 0, y: 0 };
+const SWIPE = 38, SHIFT_STEP = 70;
 const tapFx = $('tapFx');
 function tapFlash(x, y) { tapFx.style.left = x + 'px'; tapFx.style.top = y + 'px'; tapFx.classList.remove('go'); void tapFx.offsetWidth; tapFx.classList.add('go'); }
 function gestureMode(e) { return e.pointerType === 'mouse' ? 'slide' : cfg.touch; }
@@ -1884,11 +1853,6 @@ function gestureEnd(e) {
   const g = gestures.get(e.pointerId); if (!g) return;
   gestures.delete(e.pointerId);
   const now = performance.now();
-  if (!g.swipe && now - g.t0 < TAP_MS && g.moved < TAP_MOVE && e.type === 'pointerup') {
-    if (now - lastTap.t < DOUBLE_MS && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 160) {
-      jumpQueued = true; lastTap.t = -1e9; tapFlash(e.clientX, e.clientY);
-    } else lastTap = { t: now, x: e.clientX, y: e.clientY };
-  }
 }
 addEventListener('blur', () => {
   for (const k in keys) keys[k] = false;
@@ -1903,12 +1867,14 @@ function tickTouch(dt) {
   if (!wheelTouch) wheelAng *= Math.exp(-dt * 10);
   if (Math.abs(wheelAng) < 0.05 && !wheelTouch) wheelAng = 0;
   wheelSvgEl.style.transform = `rotate(${wheelAng.toFixed(1)}deg)`;
-  const wheelSteer = cfg.touch === 'wheel' ? -clamp(wheelAng / (WHEEL_LOCK[cfg.sens] || 95), -1, 1) : 0;
+  const wheelSteer = cfg.touch === 'wheel' ? -clamp(wheelAng / wheelLock(), -1, 1) : 0;
   gyro.steer = 0;
   if (gyro.rot !== null && gyro.center !== null) {
     let d = angDiff(gyro.rot, gyro.center);
-    d = Math.abs(d) < 0.03 ? 0 : d - Math.sign(d) * 0.03;
-    gyro.steer = clamp(d / (TILT_LOCK[cfg.sens] || 0.44), -1, 1);
+    const dz = 0.05;   // dead zone so a steady hand drives straight
+    d = Math.abs(d) < dz ? 0 : d - Math.sign(d) * dz;
+    const x = clamp(d / tiltLock(), -1, 1);
+    gyro.steer = x * (0.45 + 0.55 * Math.abs(x));   // softer near centre, full lock at the end
   }
   const now = performance.now();
   if (touchMode && cfg.touch === 'gyro' && S.state === 'play' && !gyro.fallback && now - gyro.startT > 2000 && now - gyro.seen > 2000) {
@@ -1917,13 +1883,13 @@ function tickTouch(dt) {
   }
   let st = 0, down = btnHeld.down, l = false, r = false;
   for (const g of gestures.values()) { st += g.steer; down = down || g.down; l = l || g.steer > 0; r = r || g.steer < 0; }
-  st = clamp(st, -1, 1) * (SENS[cfg.sens] || 0.82) + wheelSteer + (gyroActive() ? gyro.steer : 0);
+  st = clamp(st, -1, 1) * steerGain() + wheelSteer + (gyroActive() ? gyro.steer : 0);
   tc.steer = clamp(st, -1, 1); tc.down = down;
   zoneL.classList.toggle('on', l); zoneR.classList.toggle('on', r);
   tiltNeedle.style.transform = `translateX(${(-gyro.steer * 70).toFixed(1)}px)`;
   if (settingsOpen() && curTab === 'mobile' && cfg.touch === 'gyro' && (gyroStatusT -= dt) <= 0) {
     gyroStatusT = 0.15;
-    const deg = Math.round(-gyro.steer * (TILT_LOCK[cfg.sens] || 0.44) * 180 / Math.PI);
+    const deg = gyro.rot === null || gyro.center === null ? 0 : Math.round(-angDiff(gyro.rot, gyro.center) * 180 / Math.PI);
     $('gyroStatus').textContent = gyro.rot === null ? (gyro.fallback ? 'Tilt: no motion sensor found' : 'Tilt: waiting for the motion sensor…') : 'Tilt: ' + (deg === 0 ? 'centred' : Math.abs(deg) + '° ' + (deg > 0 ? 'right' : 'left'));
   }
 }
@@ -1942,7 +1908,7 @@ function pollGamepad() {
   if (label !== gpLabel) {
     gpLabel = label; $('gpStatus').textContent = label;
     const style = p && /054c|playstation|dualshock|dualsense/i.test(p.id) ? 'ps' : 'xbox';
-    if (style !== gpStyle) { gpStyle = style; renderGp(); renderMenuKeys(); }
+    if (style !== gpStyle) { gpStyle = style; renderGp(); }
   }
   if (!p) { gp.down = false; gp.steer = 0; return; }
   const n = Math.max(17, p.buttons.length), now = [], edge = [];
@@ -1973,7 +1939,6 @@ function pollGamepad() {
   if (S.state !== 'play') return;
   if (hit('gearUp')) gearInput(1);
   if (hit('gearDown')) gearInput(-1);
-  if (hit('jump')) jumpQueued = true;
   if (hit('special')) triggerSpecial();
   if (hit('camera')) setView(viewI + 1);
 }
@@ -2046,17 +2011,9 @@ function update(dt) {
       throttle = S.gear === 1 ? 0 : 1;
       brake = S.gear === 1 ? 0.22 : 0;
     }
-    steer = clamp((keys.left ? 1 : 0) - (keys.right ? 1 : 0) + gp.steer + tc.steer, -1, 1);
+    steer = clamp(((keys.left ? 1 : 0) - (keys.right ? 1 : 0) + gp.steer) * steerGain() + tc.steer, -1, 1);
   }
   const grounded = S.y <= groundY() + 0.02 && S.vy <= 0;
-  if (jumpQueued) {
-    jumpQueued = false;
-    if (playing && grounded && S.jumpCD <= 0) {
-      S.vy = 8.5; S.jumpCD = 0.7;
-      worldAt(S.s, S.d, W); burst(W.x, 0.3, W.z, PM.dust, 6, 2.5, 2, 0.7, true, 1.3);
-      thud(0.3, 220, 0.15);
-    }
-  }
 
   // speed through the gearbox
   const gear = GEARS[S.gear], shifting = S.shiftT > 0;
@@ -2094,7 +2051,7 @@ function update(dt) {
   if (wrecked) S.speed *= Math.max(0, 1 - 2 * dt);
 
   // steering in road-relative frame: the road curves away underneath you
-  S.steerS += (steer - S.steerS) * Math.min(1, dt * 8);
+  S.steerS += (steer - S.steerS) * Math.min(1, dt * steerRate());
   const grip = grounded ? 1 : 0.25;
   const sf = Math.min(1, Math.abs(S.speed) / 8);
   pose(S.s, P);
@@ -2148,7 +2105,7 @@ function update(dt) {
     }
   }
 
-  // vertical motion (jumps)
+  // vertical motion (airtime off crests)
   const gY = groundY();
   if (S.y > gY + 0.001 || S.vy > 0) {
     S.vy -= 25 * dt; S.y += S.vy * dt; S.airT += dt;
